@@ -1,4 +1,4 @@
-class RGBAColor {
+export class RGBAColor {
 
     constructor (
         public r: number,
