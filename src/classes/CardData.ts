@@ -1,4 +1,4 @@
-import { RGBAColor } from "./RGBAColors";
+import { RGBAColor } from "./RGBAColor";
 export class CardData {
   constructor(
     private value: string,
