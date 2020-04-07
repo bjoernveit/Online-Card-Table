@@ -1,20 +1,29 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Welcome to the Online Card Table" />
+    <CardTable :deckConfig="deckConfig" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "./components/HelloWorld.vue";
+import CardTable from "./components/card table/CardTable.vue";
+import { StandardDeck } from "./classes/StandardDeck";
+import { Deck, STANDARD_CARD_CONFIG, DeckConfig } from "./interfaces/Deck";
 
 @Component({
   components: {
-    HelloWorld
+    CardTable
   }
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  private deckConfig: DeckConfig = STANDARD_CARD_CONFIG;
+}
 </script>
 
 <style lang="stylus">
+@require './styles/index';
+
+body {
+  background: $background-color;
+}
 </style>
