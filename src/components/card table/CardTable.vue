@@ -57,8 +57,8 @@ $drag-zoom-factor = 1;
 
   &__table {
     position: relative;
-    width: 700px;
-    height: 700px;
+    width: 90vw;
+    height: 90vh;
     background: $table-color;
     border-radius: 100px;
     margin: 20px;
