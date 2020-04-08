@@ -1,12 +1,11 @@
 <template>
   <div class="card-table">
-    <Table>
+    <Table :gameStore="gameStore">
       <Card
         v-for="(card, index) in gameStore.cards"
         :key="index"
-        :cardData="card"
+        :gameStore="gameStore"
         :index="index"
-        @flip="flipCard"
       ></Card>
     </Table>
     <!-- <div class="card-table__player-area" @dragover.prevent="dragOver" @drop.prevent="tableDrop"></div> -->
@@ -28,11 +27,10 @@ import { GameStore } from "@/stores/GameStore";
 })
 export default class CardTable extends Vue {
   @Prop() deckConfig!: DeckConfig;
-  private gameStore: GameStore = new GameStore(this.deckConfig);
+  private gameStore: GameStore = new GameStore(this.deckConfig, true);
 
-  flipCard(index: number) {
-    console.log(`Fliping Card-${index} now.`);
-    this.gameStore.flipCard(index);
+  mounted() {
+    this.gameStore = new GameStore(this.deckConfig, true);
   }
 }
 </script>

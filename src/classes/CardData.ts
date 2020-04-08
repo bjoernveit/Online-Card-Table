@@ -16,7 +16,30 @@ export class CardData {
 }
 
 // State object containing meta data of the state of on specific card
-export interface CardState {
-  isFaceUp: boolean;
-  // TODO: Stuff like position, orientation, active, heldByPlayer ...
+export class CardState {
+  constructor(public isFaceUp: boolean, public location: CardLocation) {
+    CardState.prototype.toString = this.toString;
+  }
+
+  public toString(): string {
+    return `{ isFaceUp: ${
+      this.isFaceUp
+    }, location: ${this.location.toString()} }`;
+  }
+}
+
+export class CardLocation {
+  constructor(
+    public placedOn: HTMLElement,
+    public x: number,
+    public y: number
+  ) {
+    CardLocation.prototype.toString = this.toString;
+  }
+
+  public toString(): string {
+    return `{ placedOn: ${this.placedOn ? this.placedOn.id : ""}, x: ${
+      this.x
+    }, y: ${this.y} }`;
+  }
 }

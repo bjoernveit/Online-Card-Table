@@ -1,5 +1,5 @@
 import { DeckConfig } from "@/interfaces/Deck";
-import { CardData, CardState } from "@/classes/CardData";
+import { CardData, CardState, CardLocation } from "@/classes/CardData";
 import { StandardDeck } from "@/classes/StandardDeck";
 
 export class GameStore {
@@ -26,8 +26,25 @@ export class GameStore {
 
   public flipCard(index: number) {
     if (this.isValidIndex(index)) {
-      this.log(`flipping Card with index: ${index}`);
+      this.log(`Flipping Card with index: ${index}.`);
       this.cards[index].state.isFaceUp = !this.cards[index].state.isFaceUp;
+    }
+  }
+
+  public moveCard(
+    index: number,
+    cardElement: HTMLElement,
+    newLocation: CardLocation
+  ) {
+    if (this.isValidIndex(index)) {
+      this.log(
+        `Moving Card with index: ${index}\n${this.cards[index].state.location} ==> ${newLocation}.`
+      );
+      this.cards[index].state.location = newLocation;
+      newLocation.placedOn.appendChild(cardElement);
+      cardElement.style.position = "absolute";
+      cardElement.style.left = newLocation.x + "px";
+      cardElement.style.top = newLocation.y + "px";
     }
   }
 

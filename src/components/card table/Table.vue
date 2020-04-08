@@ -12,9 +12,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
+import { GameStore } from "@/stores/GameStore";
+import { CardLocation } from "@/classes/CardData";
 @Component({})
 export default class CardTable extends Vue {
+  @Prop(GameStore) readonly gameStore!: GameStore;
   dragLeave(e: DragEvent) {
     const target = e.target as HTMLElement;
     if (target.id === "table") {
@@ -41,13 +44,22 @@ export default class CardTable extends Vue {
         if (cardElement) {
           const mouseOffsetX = Number(dataTransfer.getData("mouse-offset-x"));
           const mouseOffsetY = Number(dataTransfer.getData("mouse-offset-y"));
-          target.appendChild(cardElement);
+          const index = Number(dataTransfer.getData("card-index"));
+          // remove drag related css properties/classes
           cardElement.style.display = "block";
-          cardElement.style.position = "absolute";
+          // cardElement.style.position = "absolute";
           cardElement.classList.remove("dragging");
-          cardElement.style.left = `${e.offsetX - mouseOffsetX}px`;
-          cardElement.style.top = `${e.offsetY - mouseOffsetY}px`;
-          // console.log(`Offset: X ${e.offsetX} Y ${e.offsetY}`);
+
+          //move card
+          this.gameStore.moveCard(
+            index,
+            cardElement,
+            new CardLocation(
+              target,
+              e.offsetX - mouseOffsetX,
+              e.offsetY - mouseOffsetY
+            )
+          );
         }
       }
     }

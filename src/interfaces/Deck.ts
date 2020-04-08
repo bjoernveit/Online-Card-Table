@@ -1,4 +1,4 @@
-import { CardData, CardState } from "@/classes/CardData";
+import { CardData, CardState, CardLocation } from "@/classes/CardData";
 import { RGBAColor } from "@/classes/RGBAColor";
 export interface Deck {
   cards: Array<CardData>;
@@ -46,5 +46,12 @@ export const STANDARD_CARD_COLORS: Array<RGBAColor> = [
 export const STANDARD_CARD_CONFIG: DeckConfig = {
   cardFaces: STANDARD_CARD_FACES,
   cardColors: STANDARD_CARD_COLORS,
-  defaultState: { isFaceUp: false },
+  defaultState: {
+    isFaceUp: false,
+    location: new CardLocation(
+      document.getElementById("table") as HTMLElement,
+      100,
+      100
+    ),
+  },
 };
