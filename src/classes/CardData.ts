@@ -29,17 +29,11 @@ export class CardState {
 }
 
 export class CardLocation {
-  constructor(
-    public placedOn: HTMLElement,
-    public x: number,
-    public y: number
-  ) {
+  constructor(public placedOnId: string, public x: number, public y: number) {
     CardLocation.prototype.toString = this.toString;
   }
 
   public toString(): string {
-    return `{ placedOn: ${this.placedOn ? this.placedOn.id : ""}, x: ${
-      this.x
-    }, y: ${this.y} }`;
+    return `{ placedOn: ${this.placedOnId}, x: ${this.x}, y: ${this.y} }`;
   }
 }

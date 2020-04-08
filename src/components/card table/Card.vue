@@ -25,6 +25,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GameStore } from "@/stores/GameStore";
+import { TABLE_ID } from "@/Constants";
 
 interface TouchDragInfo {
   startXAbsolute: string;
@@ -37,6 +38,7 @@ export default class Card extends Vue {
   @Prop(GameStore) readonly gameStore!: GameStore;
 
   private touchDragInfo!: TouchDragInfo;
+  private htmlElement!: HTMLElement;
 
   get cardValue() {
     return this.cardData.getValue();
@@ -77,7 +79,7 @@ export default class Card extends Vue {
 
     setTimeout(() => {
       target.style.display = "none";
-      const table = document.getElementById("table") as HTMLElement;
+      const table = document.getElementById(TABLE_ID) as HTMLElement;
       table.classList.add("drag-in-progress");
     }, 0);
   }
@@ -104,16 +106,31 @@ export default class Card extends Vue {
   dragEnd(e: DragEvent) {
     const target = e.target as HTMLElement;
 
-    // remove draging related css prorties/classes
+    // remove dragging related css properties/classes
     target.style.display = "block";
     target.classList.remove("dragging");
 
-    const table = document.getElementById("table") as HTMLElement;
+    const table = document.getElementById(TABLE_ID) as HTMLElement;
     table.classList.remove("drag-in-progress");
   }
 
   flip() {
     return this.gameStore.flipCard(this.index);
+  }
+  mounted() {
+    this.htmlElement = document.getElementById(this.id) as HTMLElement;
+  }
+
+  updated() {
+    if (
+      this.htmlElement.style.top != `${this.cardData.state.location.y}px` ||
+      this.htmlElement.style.left != `${this.cardData.state.location.x}px`
+    )
+      this.gameStore.moveCard(
+        this.index,
+        this.htmlElement,
+        this.cardData.state.location
+      );
   }
 }
 </script>

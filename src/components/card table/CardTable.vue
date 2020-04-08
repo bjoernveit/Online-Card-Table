@@ -8,6 +8,7 @@
         :index="index"
       ></Card>
     </Table>
+    <button @click="resetCards">Reset Cards</button>
     <!-- <div class="card-table__player-area" @dragover.prevent="dragOver" @drop.prevent="tableDrop"></div> -->
   </div>
 </template>
@@ -30,7 +31,11 @@ export default class CardTable extends Vue {
   private gameStore: GameStore = new GameStore(this.deckConfig, true);
 
   mounted() {
-    this.gameStore = new GameStore(this.deckConfig, true);
+    this.resetCards();
+  }
+
+  resetCards() {
+    this.gameStore.resetCards();
   }
 }
 </script>

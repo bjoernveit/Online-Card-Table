@@ -37,14 +37,19 @@ export class GameStore {
     newLocation: CardLocation
   ) {
     if (this.isValidIndex(index)) {
-      this.log(
-        `Moving Card with index: ${index}\n${this.cards[index].state.location} ==> ${newLocation}.`
-      );
       this.cards[index].state.location = newLocation;
-      newLocation.placedOn.appendChild(cardElement);
-      cardElement.style.position = "absolute";
-      cardElement.style.left = newLocation.x + "px";
-      cardElement.style.top = newLocation.y + "px";
+      const htmlParentElement = this.getHTMLElementFromId(
+        newLocation.placedOnId
+      );
+      if (htmlParentElement) {
+        this.log(
+          `Moving Card with index: ${index}\n${this.cards[index].state.location} ==> ${newLocation}.`
+        );
+        htmlParentElement.appendChild(cardElement);
+        cardElement.style.position = "absolute";
+        cardElement.style.left = newLocation.x + "px";
+        cardElement.style.top = newLocation.y + "px";
+      }
     }
   }
 
@@ -57,6 +62,14 @@ export class GameStore {
     } else {
       return true;
     }
+  }
+
+  private getHTMLElementFromId(id: string): HTMLElement | null {
+    const htmlParentElement = document.getElementById(id);
+    if (!htmlParentElement) {
+      this.log(`Error: Could not find HTML Element with id: ${id}`);
+    }
+    return htmlParentElement;
   }
 
   private log(text: string) {

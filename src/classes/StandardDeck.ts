@@ -1,6 +1,7 @@
 import { Deck, DeckConfig, DeckConstructor } from "@/interfaces/Deck";
 import { CardData, CardState, CardLocation } from "./CardData";
 import { RGBAColor } from "./RGBAColor";
+import { TABLE_ID } from "@/Constants";
 export class StandardDeck implements Deck {
   cards: CardData[] = [];
 
@@ -22,11 +23,7 @@ export class StandardDeck implements Deck {
     if (config.defaultState === undefined) {
       config.defaultState = {
         isFaceUp: false,
-        location: new CardLocation(
-          document.getElementById("table") as HTMLElement,
-          100,
-          100
-        ),
+        location: new CardLocation(TABLE_ID, 100, 100),
       };
     }
     config.cardColors.forEach((color: RGBAColor) => {

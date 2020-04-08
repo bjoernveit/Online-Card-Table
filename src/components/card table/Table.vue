@@ -15,19 +15,20 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GameStore } from "@/stores/GameStore";
 import { CardLocation } from "@/classes/CardData";
+import { TABLE_ID } from "@/Constants";
 @Component({})
 export default class CardTable extends Vue {
   @Prop(GameStore) readonly gameStore!: GameStore;
   dragLeave(e: DragEvent) {
     const target = e.target as HTMLElement;
-    if (target.id === "table") {
+    if (target.id === TABLE_ID) {
       //console.log("Unsetting Table drag mode.");
       target.classList.remove("drag-in-progress");
     }
   }
   dragEnter(e: DragEvent) {
     const target = e.target as HTMLElement;
-    if (target.id === "table") {
+    if (target.id === TABLE_ID) {
       target.classList.add("drag-in-progress");
       //console.log("Setting Table drag mode.");
     }
@@ -36,7 +37,7 @@ export default class CardTable extends Vue {
   tableDrop(e: DragEvent) {
     const target = e.target as HTMLElement;
     target.classList.remove("drag-in-progress");
-    if (target.id === "table") {
+    if (target.id === TABLE_ID) {
       const dataTransfer = e.dataTransfer;
       if (dataTransfer) {
         const cardElementId = dataTransfer.getData("card-id");
@@ -55,7 +56,7 @@ export default class CardTable extends Vue {
             index,
             cardElement,
             new CardLocation(
-              target,
+              target.id,
               e.offsetX - mouseOffsetX,
               e.offsetY - mouseOffsetY
             )
