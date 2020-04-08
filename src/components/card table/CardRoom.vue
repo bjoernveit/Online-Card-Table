@@ -1,5 +1,5 @@
 <template>
-  <div class="card-table">
+  <div class="card-room">
     <Table :gameStore="gameStore">
       <Card
         v-for="(card, index) in gameStore.cards"
@@ -9,7 +9,7 @@
       ></Card>
     </Table>
     <button @click="resetCards">Reset Cards</button>
-    <!-- <div class="card-table__player-area" @dragover.prevent="dragOver" @drop.prevent="tableDrop"></div> -->
+    <!-- <div class="card-room__player-area" @dragover.prevent="dragOver" @drop.prevent="tableDrop"></div> -->
   </div>
 </template>
 
@@ -26,7 +26,7 @@ import { GameStore } from "@/stores/GameStore";
     Table
   }
 })
-export default class CardTable extends Vue {
+export default class CardRoom extends Vue {
   @Prop() deckConfig!: DeckConfig;
   private gameStore: GameStore = new GameStore(this.deckConfig, true);
 
@@ -51,7 +51,7 @@ $card-font-size = 70px;
 $card-font-size--corner = 16px;
 $drag-zoom-factor = 1;
 
-.card-table {
+.card-room {
   display: flex;
   flex-direction: column;
   justify-content: space-around;

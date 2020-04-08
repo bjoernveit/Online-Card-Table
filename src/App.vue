@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <CardTable :deckConfig="deckConfig" />
+    <CardRoom :deckConfig="deckConfig" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import CardTable from "./components/card table/CardTable.vue";
+import CardRoom from "./components/card table/CardRoom.vue";
 import { StandardDeck } from "./classes/StandardDeck";
 import { Deck, STANDARD_CARD_CONFIG, DeckConfig } from "./interfaces/Deck";
 
 @Component({
   components: {
-    CardTable
+    CardRoom
   }
 })
 export default class App extends Vue {

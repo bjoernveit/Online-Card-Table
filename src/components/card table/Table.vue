@@ -1,7 +1,7 @@
 <template>
   <div
     id="table"
-    class="card-table__table"
+    class="card-room__table"
     @drop.prevent="tableDrop"
     @dragover.prevent
     @dragenter.prevent="dragEnter"

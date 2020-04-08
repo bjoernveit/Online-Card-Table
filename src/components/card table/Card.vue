@@ -2,8 +2,8 @@
   <div
     :id="id"
     :class="{
-      'card-table__card': true,
-      'card-table__card--revealed': isFaceUp
+      'card-room__card': true,
+      'card-room__card--revealed': isFaceUp
     }"
     :style="cssStyleProperties"
     draggable="true"
