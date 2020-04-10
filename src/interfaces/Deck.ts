@@ -1,6 +1,6 @@
 import { CardData, CardState, CardLocation } from "@/classes/CardData";
 import { RGBAColor } from "@/classes/RGBAColor";
-import { TABLE_ID } from "@/Constants";
+import { TABLE_ID, EMPTY_SEAT } from "@/Constants";
 export interface Deck {
   cards: Array<CardData>;
 
@@ -50,6 +50,6 @@ export const STANDARD_CARD_CONFIG: DeckConfig = {
   defaultState: {
     isFaceUp: false,
     location: new CardLocation(TABLE_ID, 100, 100),
-    owner: null
+    owner: EMPTY_SEAT
   }
 };

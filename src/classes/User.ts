@@ -13,4 +13,8 @@ export class User {
   toString() {
     return this.getUsername();
   }
+
+  static fromPojo(pojo: any): User {
+    return new User(pojo.uid, pojo.username);
+  }
 }

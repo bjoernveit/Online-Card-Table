@@ -1,6 +1,7 @@
 import { GameStore } from "@/stores/GameStore";
 import { CardLocation } from "@/classes/CardData";
 import { User } from "@/classes/User";
+import { EMPTY_SEAT } from "@/Constants";
 
 export function dragLeave(e: DragEvent) {
   const target = e.target as HTMLElement;
@@ -14,7 +15,7 @@ export function dragEnter(e: DragEvent) {
 export function cardDrop(
   e: DragEvent,
   gameStore: GameStore,
-  newOwner: User | null = null
+  newOwner: User | string = EMPTY_SEAT
 ) {
   //Remove all Drag related Classes
   const dragProgressElements = document.getElementsByClassName(

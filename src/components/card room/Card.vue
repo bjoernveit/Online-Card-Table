@@ -15,10 +15,18 @@
     @touchmove="touchMove"
     @touchend="touchEnd"
   >
-    <span class="card__corner card__corner--top-left" v-if="isFaceUp">{{ cardValue }}</span>
-    <span class="card__corner card__corner--top-right" v-if="isFaceUp">{{ cardValue }}</span>
-    <span class="card__corner card__corner--bottom-left" v-if="isFaceUp">{{ cardValue }}</span>
-    <span class="card__corner card__corner--bottom-right" v-if="isFaceUp">{{ cardValue }}</span>
+    <span class="card__corner card__corner--top-left" v-if="isFaceUp">{{
+      cardValue
+    }}</span>
+    <span class="card__corner card__corner--top-right" v-if="isFaceUp">{{
+      cardValue
+    }}</span>
+    <span class="card__corner card__corner--bottom-left" v-if="isFaceUp">{{
+      cardValue
+    }}</span>
+    <span class="card__corner card__corner--bottom-right" v-if="isFaceUp">{{
+      cardValue
+    }}</span>
     <span class="card__face" v-if="isFaceUp">{{ cardValue }}</span>
   </div>
 </template>
@@ -28,6 +36,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { GameStore } from "@/stores/GameStore";
 import { TABLE_ID } from "@/Constants";
 import { GlobalStore } from "../../stores/GlobalStore";
+import { User } from "@/classes/User";
 
 interface TouchDragInfo {
   startXAbsolute: string;
@@ -50,7 +59,8 @@ export default class Card extends Vue {
   get isFaceUp() {
     return (
       this.cardData.state.isFaceUp ||
-      this.cardData.state.owner === this.globalStore.user
+      (this.cardData.state.owner as User).getUid() ===
+        (this.globalStore.user as User).getUid()
     );
   }
 
@@ -126,11 +136,8 @@ export default class Card extends Vue {
   flip() {
     return this.gameStore.flipCard(this.index);
   }
-  mounted() {
-    this.htmlElement = document.getElementById(this.id) as HTMLElement;
-  }
 
-  updated() {
+  reposition() {
     if (
       this.htmlElement.style.top != `${this.cardData.state.location.y}px` ||
       this.htmlElement.style.left != `${this.cardData.state.location.x}px`
@@ -141,7 +148,15 @@ export default class Card extends Vue {
         this.cardData.state.location
       );
   }
+  mounted() {
+    this.htmlElement = document.getElementById(this.id) as HTMLElement;
+    this.reposition();
+  }
+
+  updated() {
+    this.reposition();
+  }
 }
 </script>
-
+d
 <style lang="stylus"></style>

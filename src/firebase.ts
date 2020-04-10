@@ -8,8 +8,10 @@ export const firebaseApp = initializeApp({
   storageBucket: "online-card-table.appspot.com",
   messagingSenderId: "1016093045045",
   appId: "1:1016093045045:web:f292b9c8e33b79c663dc7c",
-  measurementId: "G-0GVZ5MG99N",
+  measurementId: "G-0GVZ5MG99N"
 });
 
 export const db = firebaseApp.database();
-export const wordsRef = db.ref("words_basic");
+export const roomRef = db.ref().child("room1");
+export const seatsRef = roomRef.child("seats");
+export const cardsRef = roomRef.child("cards");

@@ -3,20 +3,48 @@ import { CardData, CardState, CardLocation } from "@/classes/CardData";
 import { StandardDeck } from "@/classes/StandardDeck";
 import { User } from "@/classes/User";
 import { SeatData } from "@/classes/SeatData";
+import { cardsRef, seatsRef, roomRef } from "@/firebase";
+import { EMPTY_SEAT } from "@/Constants";
+import { RGBAColor } from "@/classes/RGBAColor";
 
 export class GameStore {
   public cards: Array<CardData> = [];
   public seats: Array<SeatData> = [];
 
+  public isReady = false;
+
+  private cardsReady = false;
+  private seatsReady = false;
+
   constructor(public roomConfig: RoomConfig, private isDebug: boolean = false) {
-    this.resetCards();
-    for (let index = 0; index < roomConfig.numberOfPlayers; index++) {
-      this.seats.push(new SeatData());
-    }
+    cardsRef.once("value", this.setCardsOfSnapshot.bind(this));
+    cardsRef.on("value", this.setCardsOfSnapshot.bind(this));
+
+    seatsRef.once("value", this.setSeatsOfSnapshot.bind(this));
+    seatsRef.on("value", this.setSeatsOfSnapshot.bind(this));
+  }
+
+  public setCardsOfSnapshot(cardsSnapshot: firebase.database.DataSnapshot) {
+    this.cards = [];
+    cardsSnapshot.val().forEach((card: any) => {
+      this.cards.push(CardData.fromPojo(card));
+    });
+    this.cardsReady = true;
+    this.isReady = this.seatsReady;
+  }
+
+  public setSeatsOfSnapshot(seatsSnapshot: firebase.database.DataSnapshot) {
+    this.seats = [];
+    seatsSnapshot.val().forEach((seat: any) => {
+      this.seats.push(SeatData.fromPojo(seat));
+    });
+    this.seatsReady = true;
+    this.isReady = this.cardsReady;
   }
 
   public resetCards(): void {
-    this.cards = new StandardDeck(this.roomConfig.deckConfig).cards;
+    cardsRef.set(new StandardDeck(this.roomConfig.deckConfig).cards);
+    //this.cards = new StandardDeck(this.roomConfig.deckConfig).cards;
   }
 
   public updateCardState(index: number, state: CardState) {
@@ -24,28 +52,40 @@ export class GameStore {
       this.log(
         `Updating state of Card-${index}: from ${this.cards[index].state} to ${state}.`
       );
-      this.cards[index].state = state;
+      cardsRef
+        .child(index + "")
+        .child("state")
+        .set(state);
     }
   }
 
-  public setCardOwner(index: number, owner: User | null) {
+  public setCardOwner(index: number, owner: User | string) {
     if (
       this.isValidIndex(index, this.cards) &&
       this.cards[index].state.owner != owner
     ) {
-      if (owner) {
+      if (owner != EMPTY_SEAT) {
         this.log(`Setting card owner to ${owner} for Card-${index}.`);
       } else {
         this.log(`Resetting card ownership of Card-${index}.`);
       }
-      this.cards[index].state.owner = owner;
+      cardsRef
+        .child(index + "")
+        .child("state")
+        .child("owner")
+        .set(owner);
+      //this.cards[index].state.owner = owner;
     }
   }
 
   public flipCard(index: number) {
     if (this.isValidIndex(index, this.cards)) {
       this.log(`Flipping Card-${index}.`);
-      this.cards[index].state.isFaceUp = !this.cards[index].state.isFaceUp;
+      cardsRef
+        .child(index + "")
+        .child("state")
+        .child("isFaceUp")
+        .set(!this.cards[index].state.isFaceUp);
     }
   }
 
@@ -55,7 +95,6 @@ export class GameStore {
     newLocation: CardLocation
   ): boolean {
     if (this.isValidIndex(index, this.cards)) {
-      this.cards[index].state.location = newLocation;
       const htmlParentElement = this.getHTMLElementFromId(
         newLocation.placedOnId
       );
@@ -63,6 +102,13 @@ export class GameStore {
         this.log(
           `Moving Card-${index}:\n${this.cards[index].state.location} ==> ${newLocation}.`
         );
+
+        cardsRef
+          .child("" + index)
+          .child("state")
+          .child("location")
+          .set(newLocation);
+
         htmlParentElement.appendChild(cardElement);
         cardElement.style.position = "absolute";
         cardElement.style.left = newLocation.x + "px";
@@ -77,7 +123,10 @@ export class GameStore {
     if (this.isValidIndex(index, this.seats)) {
       if (this.seats[index].isFree()) {
         this.log(`${user} is sitting down on seat ${index}.`);
-        this.seats[index].owner = user;
+        seatsRef
+          .child("" + index)
+          .child("owner")
+          .set(user);
       } else {
         this.log(`Error: Seat ${index} is already taken by User: ${user}.`);
       }
@@ -86,8 +135,26 @@ export class GameStore {
 
   public freeSeat(index: number) {
     if (this.isValidIndex(index, this.seats)) {
-      this.seats[index].owner = null;
+      seatsRef
+        .child("" + index)
+        .child("owner")
+        .set(EMPTY_SEAT);
     }
+  }
+
+  public initData() {
+    const emptySeats: Array<SeatData> = [];
+
+    for (let index = 0; index < this.roomConfig.numberOfPlayers; index++) {
+      emptySeats.push(new SeatData());
+    }
+    const initialData: GameStoreData = {
+      cards: new StandardDeck(this.roomConfig.deckConfig).cards,
+      seats: emptySeats,
+      roomConfig: this.roomConfig
+    };
+    console.log(initialData);
+    roomRef.set(initialData);
   }
 
   private isValidIndex(index: number, array: Array<any>) {
@@ -112,4 +179,10 @@ export class GameStore {
       console.log(`[GameStore]: ${text}`);
     }
   }
+}
+
+export interface GameStoreData {
+  cards: Array<CardData>;
+  seats: Array<SeatData>;
+  roomConfig: RoomConfig;
 }

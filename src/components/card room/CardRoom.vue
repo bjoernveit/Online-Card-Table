@@ -1,5 +1,5 @@
 <template>
-  <div class="card-room">
+  <div class="card-room" v-if="gameStore.isReady">
     <div class="player-area__wrapper">
       <PlayerArea
         v-for="(_, index) in new Array(roomConfig.numberOfPlayers / 2)"
@@ -18,10 +18,16 @@
           :globalStore="globalStore"
           :index="index"
         ></Card>
-        <button
-          @click="resetCards"
+        <div
           style="position:absolute;bottom:3%;left:50%;transform:translate(-50%,0);"
-        >Reset Cards</button>
+        >
+          <button @click="resetCards">
+            Reset Cards
+          </button>
+          <button @click="resetSeats">
+            Reset Seats
+          </button>
+        </div>
       </Table>
     </div>
     <div class="player-area__wrapper">
@@ -45,7 +51,7 @@ import Card from "./Card.vue";
 import Table from "./Table.vue";
 import PlayerArea from "./PlayerArea.vue";
 import { RoomConfig } from "@/classes/RoomConfig";
-import { GameStore } from "@/stores/GameStore";
+import { GameStore, GameStoreData } from "@/stores/GameStore";
 import { GlobalStore } from "@/stores/GlobalStore";
 
 @Component({
@@ -59,13 +65,19 @@ export default class CardRoom extends Vue {
   @Prop() readonly roomConfig!: RoomConfig;
   @Prop() readonly globalStore!: GlobalStore;
   private gameStore: GameStore = new GameStore(this.roomConfig, true);
-
   mounted() {
-    this.resetCards();
+    //this.resetCards();
   }
 
   resetCards() {
     this.gameStore.resetCards();
+    //this.gameStore.initData();
+  }
+
+  resetSeats() {
+    for (let index = 0; index < this.roomConfig.numberOfPlayers; index++) {
+      this.gameStore.freeSeat(index);
+    }
   }
 }
 </script>
@@ -81,6 +93,7 @@ $card-line-height = 50px * $scale-factor;
 $card-font-size = 70px * $scale-factor;
 $card-font-size--corner = 16px * $scale-factor;
 $drag-zoom-factor = 1;
+
 
 .card-room {
   // margin-top: 5vh;
@@ -139,8 +152,8 @@ $drag-zoom-factor = 1;
     font-family: Arial;
     background: #609BF4;
     filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.5));
-    top: 20%;
-    left: 20%;
+    top: 100px;
+    left: 100px;
 
     &.dragging {
       width: ($card-size * $drag-zoom-factor);
@@ -154,6 +167,14 @@ $drag-zoom-factor = 1;
       background: #ffffff;
       border: none;
     }
+
+
+  }
+  & button {
+    margin 0 5px
+    padding 10px
+
+    filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 1));
   }
 }
 

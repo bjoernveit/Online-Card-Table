@@ -3,8 +3,16 @@
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" v-model="username" />
     <label for="password">Password:</label>
-    <input type="password" id="password" name="password" v-model="password" maxlength="20" />
-    <button @click="loginOrRegister" :disabled="!isInputValid">Login / Register</button>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      v-model="password"
+      maxlength="20"
+    />
+    <button @click="loginOrRegister" :disabled="!isInputValid">
+      Login / Register
+    </button>
   </div>
 </template>
 
@@ -58,14 +66,14 @@ export default class Login extends Vue {
   background: #c4c4c4;
   padding: 10px;
   box-sizing: border-box;
-}
 
-& button {
-  width: 120px;
-  margin: auto;
-}
+  & button {
+    width: 120px;
+    margin: auto;
+  }
 
-& input {
-  margin-bottom: 10px;
+  & input {
+    margin-bottom: 10px;
+  }
 }
 </style>
