@@ -21,11 +21,12 @@ export class StandardDeck implements Deck {
 
   constructor(config: DeckConfig) {
     if (config.defaultState === undefined) {
-      config.defaultState = {
-        isFaceUp: false,
-        location: new CardLocation(TABLE_ID, 100, 100),
-      };
+      config.defaultState = new CardState(
+        false,
+        new CardLocation(TABLE_ID, 100, 100)
+      );
     }
+
     config.cardColors.forEach((color: RGBAColor) => {
       config.cardFaces.forEach((face: string) => {
         this.cards.push(
@@ -50,12 +51,12 @@ export const STANDARD_CARD_FACES: Array<string> = [
   "T",
   "J",
   "Q",
-  "K",
+  "K"
 ];
 
 export const STANDARD_CARD_COLORS: Array<RGBAColor> = [
   new RGBAColor(182, 5, 5),
   new RGBAColor(10, 168, 6),
   new RGBAColor(0, 0, 0),
-  new RGBAColor(36, 93, 203),
+  new RGBAColor(36, 93, 203)
 ];

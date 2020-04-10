@@ -1,4 +1,5 @@
 import { RGBAColor } from "./RGBAColor";
+import { User } from "./User";
 export class CardData {
   constructor(
     private value: string,
@@ -17,7 +18,11 @@ export class CardData {
 
 // State object containing meta data of the state of on specific card
 export class CardState {
-  constructor(public isFaceUp: boolean, public location: CardLocation) {
+  constructor(
+    public isFaceUp: boolean,
+    public location: CardLocation,
+    public owner: User | null = null
+  ) {
     CardState.prototype.toString = this.toString;
   }
 

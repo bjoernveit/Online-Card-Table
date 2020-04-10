@@ -34,14 +34,14 @@ export const STANDARD_CARD_FACES: Array<string> = [
   "T",
   "J",
   "Q",
-  "K",
+  "K"
 ];
 
 export const STANDARD_CARD_COLORS: Array<RGBAColor> = [
   new RGBAColor(182, 5, 5),
   new RGBAColor(10, 168, 6),
   new RGBAColor(0, 0, 0),
-  new RGBAColor(36, 93, 203),
+  new RGBAColor(36, 93, 203)
 ];
 
 export const STANDARD_CARD_CONFIG: DeckConfig = {
@@ -50,5 +50,6 @@ export const STANDARD_CARD_CONFIG: DeckConfig = {
   defaultState: {
     isFaceUp: false,
     location: new CardLocation(TABLE_ID, 100, 100),
-  },
+    owner: null
+  }
 };
