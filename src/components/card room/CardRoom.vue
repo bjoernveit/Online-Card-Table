@@ -85,7 +85,7 @@ export default class CardRoom extends Vue {
 <style lang="stylus">
 @require '../../styles/index';
 
-$scale-factor = 0.6;
+$scale-factor = 0.8;
 $card-corner-space = 7px * $scale-factor;
 $card-size = 100px * $scale-factor;
 $card-border-size = 10px * $scale-factor;
@@ -118,8 +118,8 @@ $drag-zoom-factor = 1;
   }
 
   &__player-area {
-    min-width: $card-size * 5;
-    min-height: $card-size * 2;
+    min-width: $card-size * 4;
+    min-height: $card-size *2;
     border-radius: 20px;
     background: $player-area-color;
     box-sizing: border-box;
