@@ -9,12 +9,18 @@
         >Password incorrect. Please enter the correct password, or register a different user.</div>
         <label for="usernameInput">Username</label>
         <input
-          v-model="username"
-          type="text"
-          :class="{'form-control': true,'border-dark': (username === ''), 'border-success': isUserValid, 'border-danger': (username != '' && !isUserValid)}"
           id="usernameInput"
+          type="text"
+          v-model="username"
+          @change.prevent="checkUser"
           aria-describedby="usernameInfo"
           placeholder="Enter Username"
+          :class="{
+            'form-control': true,
+            'border-dark': username === '',
+            'border-success': isUserValid,
+            'border-danger': username != '' && !isUserValid
+          }"
         />
         <small
           id="usernameInfo"
@@ -25,19 +31,40 @@
         <label for="exampleInputPassword1">Password</label>
         <input
           type="password"
-          :class="{'form-control': true,'border-dark': (password === ''), 'border-success': isPasswordValid, 'border-danger': (password != '' && !isPasswordValid)}"
+          :class="{
+            'form-control': true,
+            'border-dark': password === '',
+            'border-success': isPasswordValid,
+            'border-danger': password != '' && !isPasswordValid
+          }"
           v-model="password"
           id="exampleInputPassword1"
           placeholder="Password"
+        />
+
+        <input
+          id="exampleInputPassword1"
+          v-if="isUserRegistered === false"
+          v-model="password2"
+          type="password"
+          :class="{
+            'form-control': true,
+            'border-dark': password === '',
+            'border-success': arePasswordsEqual,
+            'border-danger': !arePasswordsEqual
+          }"
+          placeholder="Repeat Password"
         />
       </div>
 
       <button
         type="submit"
-        :disabled="isInputValid === false"
-        :class="{'btn btn-primary btn-block btn-success btn-lg': true, 'border-dark': (password === ''), 'border-success': isPasswordValid} "
+        :disabled="isButtonDisabled"
+        :class="{
+          'btn btn-primary btn-block btn-success btn-lg border-dark': true
+        }"
         @click.prevent="loginOrRegister"
-      >Login / Register</button>
+      >{{ buttonText }}</button>
     </form>
   </div>
 </template>
@@ -51,7 +78,9 @@ export default class Login extends Vue {
   @Prop(GlobalStore) readonly globalStore!: GlobalStore;
   private username = "";
   private password = "";
+  private password2 = "";
   private isFailed = false;
+  private isUserRegistered: null | boolean = null;
 
   get isInputValid(): boolean {
     return this.isUserValid && this.isPasswordValid;
@@ -66,30 +95,62 @@ export default class Login extends Vue {
     return this.password.length > 6 && this.password.length < 20;
   }
 
-  get buttonClasses() {
-    return {};
+  get arePasswordsEqual() {
+    return this.password === this.password2;
+  }
+
+  get buttonText() {
+    if (this.isUserRegistered === null) {
+      return "Login / Register";
+    } else if (this.isUserRegistered) {
+      return "Login";
+    }
+    return "Register";
+  }
+
+  get isButtonDisabled() {
+    return (
+      !this.isInputValid || (!this.isUserRegistered && !this.arePasswordsEqual)
+    );
+  }
+
+  async checkUser() {
+    this.isUserRegistered = await this.globalStore
+      .isRegistered(this.username)
+      .then(success => {
+        return success;
+      })
+      .catch(() => {
+        return false;
+      });
   }
 
   async loginOrRegister() {
-    console.log("logging in now.");
-    await this.globalStore
-      .login(this.username, this.password)
-      .then(async success => {
-        if (!success) {
-          console.log("Login failed, trying to register now.");
-          const success = await this.globalStore
-            .registerUser(this.username, this.password)
-            .then(success => {
-              return success;
-            })
-            .catch(reason => {
-              console.log(reason);
-              return false;
-            });
-          this.isFailed = !success;
-          console.log(`Registration ${success ? "successfull" : "failed"}.`);
-        }
-      });
+    const isRegistered = await this.globalStore.isRegistered(this.username);
+    let success = false;
+    if (isRegistered) {
+      //login
+      success = await this.globalStore
+        .login(this.username, this.password)
+        .then(success => {
+          return success;
+        })
+        .catch(() => {
+          return false;
+        });
+    } else {
+      //register
+      success = await this.globalStore
+        .registerUser(this.username, this.password)
+        .then(success => {
+          return success;
+        })
+        .catch(() => {
+          return false;
+        });
+    }
+
+    this.isFailed = !success;
   }
 }
 </script>
