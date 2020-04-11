@@ -2,6 +2,11 @@
   <div class="login">
     <form>
       <div class="form-group">
+        <div
+          class="alert alert-danger"
+          role="alert"
+          v-if="isFailed"
+        >Password incorrect. Please enter the correct password, or register a different user.</div>
         <label for="usernameInput">Username</label>
         <input
           v-model="username"
@@ -26,8 +31,10 @@
           placeholder="Password"
         />
       </div>
+
       <button
         type="submit"
+        :disabled="isInputValid === false"
         :class="{'btn btn-primary btn-block btn-success btn-lg': true, 'border-dark': (password === ''), 'border-success': isPasswordValid} "
         @click.prevent="loginOrRegister"
       >Login / Register</button>
@@ -44,6 +51,7 @@ export default class Login extends Vue {
   @Prop(GlobalStore) readonly globalStore!: GlobalStore;
   private username = "";
   private password = "";
+  private isFailed = false;
 
   get isInputValid(): boolean {
     return this.isUserValid && this.isPasswordValid;
@@ -69,10 +77,16 @@ export default class Login extends Vue {
       .then(async success => {
         if (!success) {
           console.log("Login failed, trying to register now.");
-          const success = await this.globalStore.registerUser(
-            this.username,
-            this.password
-          );
+          const success = await this.globalStore
+            .registerUser(this.username, this.password)
+            .then(success => {
+              return success;
+            })
+            .catch(reason => {
+              console.log(reason);
+              return false;
+            });
+          this.isFailed = !success;
           console.log(`Registration ${success ? "successfull" : "failed"}.`);
         }
       });
