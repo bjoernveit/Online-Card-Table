@@ -1,18 +1,37 @@
 <template>
   <div class="login">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" v-model="username" />
-    <label for="password">Password:</label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      v-model="password"
-      maxlength="20"
-    />
-    <button @click="loginOrRegister" :disabled="!isInputValid">
-      Login / Register
-    </button>
+    <form>
+      <div class="form-group">
+        <label for="usernameInput">Username</label>
+        <input
+          v-model="username"
+          type="text"
+          :class="{'form-control': true,'border-dark': (username === ''), 'border-success': isUserValid, 'border-danger': (username != '' && !isUserValid)}"
+          id="usernameInput"
+          aria-describedby="usernameInfo"
+          placeholder="Enter Username"
+        />
+        <small
+          id="usernameInfo"
+          class="form-text text-muted"
+        >Entering an unused Username, will automatically register that name for you.</small>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input
+          type="password"
+          :class="{'form-control': true,'border-dark': (password === ''), 'border-success': isPasswordValid, 'border-danger': (password != '' && !isPasswordValid)}"
+          v-model="password"
+          id="exampleInputPassword1"
+          placeholder="Password"
+        />
+      </div>
+      <button
+        type="submit"
+        :class="{'btn btn-primary btn-block btn-success btn-lg': true, 'border-dark': (password === ''), 'border-success': isPasswordValid} "
+        @click.prevent="loginOrRegister"
+      >Login / Register</button>
+    </form>
   </div>
 </template>
 
@@ -36,7 +55,11 @@ export default class Login extends Vue {
   }
 
   get isPasswordValid(): boolean {
-    return this.password.length > 3 && this.password.length < 20;
+    return this.password.length > 6 && this.password.length < 20;
+  }
+
+  get buttonClasses() {
+    return {};
   }
 
   async loginOrRegister() {
@@ -60,15 +83,14 @@ export default class Login extends Vue {
 <style lang="stylus">
 .login {
   font-family: Arial;
-  width: 200px;
+  width: 300px;
   margin: auto;
   border-radius: 10px;
   background: #c4c4c4;
-  padding: 10px;
+  padding: 20px;
   box-sizing: border-box;
 
   & button {
-    width: 120px;
     margin: auto;
   }
 
