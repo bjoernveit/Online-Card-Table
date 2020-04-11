@@ -5,7 +5,8 @@ export class GlobalStore {
   public user: User | null;
 
   constructor(public isDebug: boolean = false) {
-    this.user = new User("Developer", "Developer");
+    //this.user = new User("Developer", "Developer");
+    this.user = null;
   }
 
   public async login(username: string, password: string): Promise<boolean> {
@@ -58,7 +59,7 @@ export class GlobalStore {
       : firebaseUser?.email;
     const uid = firebaseUser?.uid;
     if (username && uid) {
-      return new User(uid, username);
+      return new User(uid, username.substr(0, username.lastIndexOf("@")));
     }
     return null;
   }
