@@ -16,8 +16,8 @@ export interface DeckConstructor {
 }
 
 export interface DeckConfig {
-  cardFaces: Array<string>;
-  cardColors: Array<RGBAColor>;
+  cardFaces: Array<string[]>;
+  cardColors: Array<RGBAColor[]>;
   defaultState?: CardState;
 }
 
@@ -45,8 +45,8 @@ export const STANDARD_CARD_COLORS: Array<RGBAColor> = [
 ];
 
 export const STANDARD_CARD_CONFIG: DeckConfig = {
-  cardFaces: STANDARD_CARD_FACES,
-  cardColors: STANDARD_CARD_COLORS,
+  cardFaces: [STANDARD_CARD_FACES],
+  cardColors: [STANDARD_CARD_COLORS],
   defaultState: {
     isFaceUp: false,
     location: new CardLocation(TABLE_ID, 100, 100),

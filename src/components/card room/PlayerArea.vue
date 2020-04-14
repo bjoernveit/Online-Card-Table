@@ -1,6 +1,5 @@
 <template>
   <div class="text-center">
-    <span class="ignore-on-drag owner-name">{{ ownerName }}</span>
     <div
       :id="id"
       :class="{
@@ -12,17 +11,19 @@
       @dragenter.prevent="dragEnter"
       @dragleave.prevent="dragLeave"
     >
+      <span class="ignore-on-drag owner-name">{{ ownerName }}</span>
+      <hr v-if="!isFree" />
+      <slot />
       <div
         class="player-area__text ignore-on-drag"
         v-if="isFree"
-        style="border: 1px dashed #000; padding: 10px; border-radius: 10px; margin: 10px; width: 100%"
+        style="padding: 10px; border-radius: 10px; margin: 10px; width: 100%"
         @click="sitDown"
       >
         <div>{{ defaultText1 }}</div>
         <div>{{ defaultText2 }}</div>
+        <slot />
       </div>
-
-      <slot />
     </div>
   </div>
 </template>
@@ -96,10 +97,21 @@ export default class PlayerArea extends Vue {
 </script>
 
 <style lang="stylus">
+@require '../../styles/index';
+
 .owner-name {
-  color: #fd9cec;
+  color: $player-name-color;
   text-align: center;
   font-weight: bold;
   font-size: 1.3em;
+  // text-shadow: 0px 2px 2px $player-name-shadow-color;
+}
+
+.card-room__player-area {
+  & hr {
+    margin: 0 25px;
+    border: 0;
+    border-top: 1px solid #ffc107;
+  }
 }
 </style>

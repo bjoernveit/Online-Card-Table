@@ -8,7 +8,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import CardRoom from "./components/card room/CardRoom.vue";
-import { STANDARD_CARD_CONFIG } from "./interfaces/Deck";
+import { STANDARD_CARD_CONFIG, STANDARD_CARD_COLORS } from "./interfaces/Deck";
 import { RoomConfig } from "@/classes/RoomConfig";
 import Login from "./components/Login.vue";
 import { GlobalStore } from "./stores/GlobalStore";
@@ -20,7 +20,14 @@ import { GlobalStore } from "./stores/GlobalStore";
   }
 })
 export default class App extends Vue {
-  private roomConfig: RoomConfig = new RoomConfig(STANDARD_CARD_CONFIG, 8);
+  // private roomConfig: RoomConfig = new RoomConfig(STANDARD_CARD_CONFIG, 8);
+  private roomConfig: RoomConfig = new RoomConfig(
+    {
+      cardFaces: [["7", "8", "9", "10", "B", "D", "K", "A"]],
+      cardColors: [STANDARD_CARD_COLORS]
+    },
+    8
+  );
   private globalStore: GlobalStore = new GlobalStore(true);
 
   get isLoggedIn() {
@@ -34,7 +41,7 @@ export default class App extends Vue {
 
 body {
   background: $background-color;
-  font-family: Roboto;
+  font-family: 'Handlee', Roboto;
 }
 
 .text-center {

@@ -27,36 +27,16 @@ export class StandardDeck implements Deck {
       );
     }
 
-    config.cardColors.forEach((color: RGBAColor) => {
-      config.cardFaces.forEach((face: string) => {
-        this.cards.push(
-          new CardData(face, color, { ...(config.defaultState as CardState) })
-        );
+    config.cardColors.forEach((group, index) => {
+      group.forEach((color: RGBAColor) => {
+        config.cardFaces[index].forEach((face: string) => {
+          this.cards.push(
+            new CardData(face, color, { ...(config.defaultState as CardState) })
+          );
+        });
       });
     });
+
     this.shuffle();
   }
 }
-
-export const STANDARD_CARD_FACES: Array<string> = [
-  "A",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "T",
-  "J",
-  "Q",
-  "K"
-];
-
-export const STANDARD_CARD_COLORS: Array<RGBAColor> = [
-  new RGBAColor(182, 5, 5),
-  new RGBAColor(10, 168, 6),
-  new RGBAColor(0, 0, 0),
-  new RGBAColor(36, 93, 203)
-];

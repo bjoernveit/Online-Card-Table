@@ -4,7 +4,7 @@ import { StandardDeck } from "@/classes/StandardDeck";
 import { User } from "@/classes/User";
 import { SeatData } from "@/classes/SeatData";
 import { cardsRef, seatsRef, roomRef } from "@/firebase";
-import { EMPTY_SEAT } from "@/Constants";
+import { EMPTY_SEAT, TABLE_ID } from "@/Constants";
 import { RGBAColor } from "@/classes/RGBAColor";
 
 export class GameStore {
@@ -26,10 +26,12 @@ export class GameStore {
 
   public setCardsOfSnapshot(cardsSnapshot: firebase.database.DataSnapshot) {
     this.cards = [];
-    cardsSnapshot.val().forEach((card: any) => {
-      this.cards.push(CardData.fromPojo(card));
-    });
-    this.cardsReady = true;
+    if (cardsSnapshot.val()) {
+      cardsSnapshot.val().forEach((card: any) => {
+        this.cards.push(CardData.fromPojo(card));
+      });
+      this.cardsReady = true;
+    }
     this.isReady = this.seatsReady;
   }
 
@@ -94,6 +96,8 @@ export class GameStore {
     cardElement: HTMLElement,
     newLocation: CardLocation
   ): boolean {
+    const formTable = this.cards[index].state.location.placedOnId === TABLE_ID;
+    const toUser = newLocation.placedOnId != TABLE_ID;
     if (this.isValidIndex(index, this.cards)) {
       const htmlParentElement = this.getHTMLElementFromId(
         newLocation.placedOnId
@@ -103,20 +107,36 @@ export class GameStore {
           `Moving Card-${index}:\n${this.cards[index].state.location} ==> ${newLocation}.`
         );
 
+        const updatedCardState: CardState = new CardState(
+          formTable && toUser ? false : this.cards[index].state.isFaceUp,
+          newLocation,
+          this.cards[index].state.owner
+        );
+
         cardsRef
           .child("" + index)
           .child("state")
-          .child("location")
-          .set(newLocation);
+          .set(updatedCardState);
 
-        htmlParentElement.appendChild(cardElement);
-        cardElement.style.position = "absolute";
-        cardElement.style.left = newLocation.x + "px";
-        cardElement.style.top = newLocation.y + "px";
+        this.repositionCardLocally(index, cardElement);
         return true;
       }
     }
     return false;
+  }
+
+  public repositionCardLocally(index: number, cardElement: HTMLElement) {
+    if (this.isValidIndex(index, this.cards)) {
+      const htmlParentElement = this.getHTMLElementFromId(
+        this.cards[index].state.location.placedOnId
+      );
+      if (htmlParentElement) {
+        htmlParentElement.appendChild(cardElement);
+        cardElement.style.position = "absolute";
+        cardElement.style.left = this.cards[index].state.location.x + "px";
+        cardElement.style.top = this.cards[index].state.location.y + "px";
+      }
+    }
   }
 
   public placeUser(index: number, user: User) {

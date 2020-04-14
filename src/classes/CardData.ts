@@ -34,7 +34,7 @@ export class CardState {
     return new CardState(
       pojo.isFaceUp,
       CardLocation.fromPojo(pojo.location),
-      User.fromPojo(pojo.owner)
+      pojo.owner != EMPTY_SEAT ? User.fromPojo(pojo.owner) : EMPTY_SEAT
     );
   }
 }

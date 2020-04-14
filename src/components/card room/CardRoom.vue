@@ -18,15 +18,9 @@
           :globalStore="globalStore"
           :index="index"
         ></Card>
-        <div
-          style="position:absolute;bottom:3%;left:50%;transform:translate(-50%,0);"
-        >
-          <button @click="resetCards">
-            Reset Cards
-          </button>
-          <button @click="resetSeats">
-            Reset Seats
-          </button>
+        <div style="position:absolute;bottom:3%;left:50%;transform:translate(-50%,0);">
+          <button class="btn btn-lg btn-success" @click="resetCards">Reset Cards</button>
+          <button class="btn btn-lg btn-danger" @click="resetSeats">Reset Seats</button>
         </div>
       </Table>
     </div>
@@ -40,7 +34,7 @@
       ></PlayerArea>
     </div>
     <div>
-      <!-- <div class="card-room__player-area" @dragover.prevent="dragOver" @drop.prevent="tableDrop"></div> -->
+      <!-- <DeckConfig :gameStore="gameStore" /> -->
     </div>
   </div>
 </template>
@@ -53,12 +47,14 @@ import PlayerArea from "./PlayerArea.vue";
 import { RoomConfig } from "@/classes/RoomConfig";
 import { GameStore, GameStoreData } from "@/stores/GameStore";
 import { GlobalStore } from "@/stores/GlobalStore";
+import DeckConfig from "./DeckConfig.vue";
 
 @Component({
   components: {
     Card,
     Table,
-    PlayerArea
+    PlayerArea,
+    DeckConfig
   }
 })
 export default class CardRoom extends Vue {
@@ -88,12 +84,11 @@ export default class CardRoom extends Vue {
 $scale-factor = 0.8;
 $card-corner-space = 7px * $scale-factor;
 $card-size = 100px * $scale-factor;
-$card-border-size = 10px * $scale-factor;
+$card-border-size = 3px;
 $card-line-height = 50px * $scale-factor;
 $card-font-size = 70px * $scale-factor;
 $card-font-size--corner = 16px * $scale-factor;
 $drag-zoom-factor = 1;
-
 
 .card-room {
   // margin-top: 5vh;
@@ -112,30 +107,32 @@ $drag-zoom-factor = 1;
     background: $table-color;
     background-image: url('~@/assets/table_dark.png');
     background-size: 100%;
-    border-radius: 100px;
+    border-radius: 30px;
     margin: 20px;
-    filter: drop-shadow(0px 0px 5px rgba(255, 255, 255, 0.5));
+    filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.5));
   }
 
   &__player-area {
     min-width: $card-size * 4;
-    min-height: $card-size *2;
+    min-height: $card-size * 2;
     border-radius: 20px;
     background: $player-area-color;
     box-sizing: border-box;
     text-align: center;
     position: relative;
-    margin: 10px;
-    filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.5));
+    padding-top: 5px;
+    margin: 0 10px;
+    color: #FFF;
 
+    // filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.5));
     &--empty {
       font-size: 30px;
       // min-width: auto;
       // min-height: auto;
+      background: $player-area-color--empty;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 34px 10px 10px;
     }
   }
 
@@ -149,8 +146,10 @@ $drag-zoom-factor = 1;
     font-size: $card-font-size;
     background: #FFF;
     border-radius: $card-border-size;
-    font-family: Arial;
+    font-family: Rubik, Arial;
     background: #609BF4;
+    background-image: url('~@/assets/card_bg.png');
+    background-size: 100%;
     filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.5));
     top: 100px;
     left: 100px;
@@ -167,14 +166,12 @@ $drag-zoom-factor = 1;
       background: #ffffff;
       border: none;
     }
-
-
   }
-  & button {
-    margin 0 5px
-    padding 10px
 
-    filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 1));
+  & button {
+    margin: 0 5px;
+    padding: 10px;
+    filter: drop-shadow(0px 0px 1px #000);
   }
 }
 
@@ -196,10 +193,9 @@ $drag-zoom-factor = 1;
     font-weight: bold;
     text-align: center;
     position: absolute;
+    display: block;
     top: 25%;
-    right: 25%;
-    bottom: 25%;
-    left: 25%;
+    width: 100%;
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
 

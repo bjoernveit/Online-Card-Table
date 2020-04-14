@@ -157,7 +157,7 @@ export default class Login extends Vue {
 
 <style lang="stylus">
 .login {
-  font-family: Arial;
+  font-family: Rubik;
   width: 300px;
   margin: auto;
   border-radius: 10px;

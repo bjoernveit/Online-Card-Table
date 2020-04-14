@@ -15,18 +15,26 @@
     @touchmove="touchMove"
     @touchend="touchEnd"
   >
-    <span class="card__corner card__corner--top-left" v-if="isFaceUp">{{
+    <span class="card__corner card__corner--top-left" v-if="isFaceUp">
+      {{
       cardValue
-    }}</span>
-    <span class="card__corner card__corner--top-right" v-if="isFaceUp">{{
+      }}
+    </span>
+    <span class="card__corner card__corner--top-right" v-if="isFaceUp">
+      {{
       cardValue
-    }}</span>
-    <span class="card__corner card__corner--bottom-left" v-if="isFaceUp">{{
+      }}
+    </span>
+    <span class="card__corner card__corner--bottom-left" v-if="isFaceUp">
+      {{
       cardValue
-    }}</span>
-    <span class="card__corner card__corner--bottom-right" v-if="isFaceUp">{{
+      }}
+    </span>
+    <span class="card__corner card__corner--bottom-right" v-if="isFaceUp">
+      {{
       cardValue
-    }}</span>
+      }}
+    </span>
     <span class="card__face" v-if="isFaceUp">{{ cardValue }}</span>
   </div>
 </template>
@@ -34,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GameStore } from "@/stores/GameStore";
-import { TABLE_ID } from "@/Constants";
+import { TABLE_ID, EMPTY_SEAT } from "@/Constants";
 import { GlobalStore } from "../../stores/GlobalStore";
 import { User } from "@/classes/User";
 
@@ -57,11 +65,12 @@ export default class Card extends Vue {
   }
 
   get isFaceUp() {
-    return (
-      this.cardData.state.isFaceUp ||
+    const cardHasOwner = this.cardData.state.owner != EMPTY_SEAT;
+    const isUserTheOwner =
+      cardHasOwner &&
       (this.cardData.state.owner as User).getUid() ===
-        (this.globalStore.user as User).getUid()
-    );
+        (this.globalStore.user as User).getUid();
+    return this.cardData.state.isFaceUp || isUserTheOwner;
   }
 
   get colorCSS() {
@@ -141,12 +150,10 @@ export default class Card extends Vue {
     if (
       this.htmlElement.style.top != `${this.cardData.state.location.y}px` ||
       this.htmlElement.style.left != `${this.cardData.state.location.x}px`
-    )
-      this.gameStore.moveCard(
-        this.index,
-        this.htmlElement,
-        this.cardData.state.location
-      );
+    ) {
+      //TODO: make this client change only
+      this.gameStore.repositionCardLocally(this.index, this.htmlElement);
+    }
   }
   mounted() {
     this.htmlElement = document.getElementById(this.id) as HTMLElement;

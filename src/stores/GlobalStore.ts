@@ -5,7 +5,7 @@ export class GlobalStore {
   public user: User | null;
 
   constructor(public isDebug: boolean = false) {
-    //this.user = new User("Developer", "Developer");
+    // this.user = new User("Developer", "Developer");
     this.user = null;
   }
 
