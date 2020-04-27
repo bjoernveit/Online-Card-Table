@@ -15,3 +15,4 @@ export const db = firebaseApp.database();
 export const roomRef = db.ref().child("room1");
 export const seatsRef = roomRef.child("seats");
 export const cardsRef = roomRef.child("cards");
+export const roomConfigRef = roomRef.child("roomConfig");

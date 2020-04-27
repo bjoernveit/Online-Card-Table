@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Login :globalStore="globalStore" v-if="!isLoggedIn" />
-    <CardRoom :globalStore="globalStore" :roomConfig="roomConfig" v-if="isLoggedIn" />
+    <CardRoom :globalStore="globalStore" v-if="isLoggedIn" />
   </div>
 </template>
 
@@ -21,13 +21,6 @@ import { GlobalStore } from "./stores/GlobalStore";
 })
 export default class App extends Vue {
   // private roomConfig: RoomConfig = new RoomConfig(STANDARD_CARD_CONFIG, 8);
-  private roomConfig: RoomConfig = new RoomConfig(
-    {
-      cardFaces: [["7", "8", "9", "10", "B", "D", "K", "A"]],
-      cardColors: [STANDARD_CARD_COLORS]
-    },
-    8
-  );
   private globalStore: GlobalStore = new GlobalStore(true);
 
   get isLoggedIn() {

@@ -1,6 +1,6 @@
 import { Deck, DeckConfig, DeckConstructor } from "@/interfaces/Deck";
 import { CardData, CardState, CardLocation } from "./CardData";
-import { RGBAColor } from "./RGBAColor";
+import { HTMLColor } from "./HTMLColor";
 import { TABLE_ID } from "@/Constants";
 export class StandardDeck implements Deck {
   cards: CardData[] = [];
@@ -28,7 +28,7 @@ export class StandardDeck implements Deck {
     }
 
     config.cardColors.forEach((group, index) => {
-      group.forEach((color: RGBAColor) => {
+      group.forEach((color: HTMLColor) => {
         config.cardFaces[index].forEach((face: string) => {
           this.cards.push(
             new CardData(face, color, { ...(config.defaultState as CardState) })

@@ -18,9 +18,12 @@
           :globalStore="globalStore"
           :index="index"
         ></Card>
-        <div style="position:absolute;bottom:3%;left:50%;transform:translate(-50%,0);">
+        <div style="position:absolute;bottom:3%;left:50%;transform:translate(-50%,0);display:flex;">
           <button class="btn btn-lg btn-success" @click="resetCards">Reset Cards</button>
           <button class="btn btn-lg btn-danger" @click="resetSeats">Reset Seats</button>
+          <button class="btn btn-lg btn-dark" @click="showConfig">
+            <fa-icon icon="tools" size="1x" />
+          </button>
         </div>
       </Table>
     </div>
@@ -34,7 +37,7 @@
       ></PlayerArea>
     </div>
     <div>
-      <!-- <DeckConfig :gameStore="gameStore" /> -->
+      <DeckConfigEditor v-if="isShowConfig" :gameStore="gameStore" @hide-config="hideConfig" />
     </div>
   </div>
 </template>
@@ -44,23 +47,23 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import Card from "./Card.vue";
 import Table from "./Table.vue";
 import PlayerArea from "./PlayerArea.vue";
-import { RoomConfig } from "@/classes/RoomConfig";
-import { GameStore, GameStoreData } from "@/stores/GameStore";
+import DeckConfigEditor from "./DeckConfigEditor.vue";
+import { GameStore } from "@/stores/GameStore";
 import { GlobalStore } from "@/stores/GlobalStore";
-import DeckConfig from "./DeckConfig.vue";
 
 @Component({
   components: {
     Card,
     Table,
     PlayerArea,
-    DeckConfig
+    DeckConfigEditor
   }
 })
 export default class CardRoom extends Vue {
-  @Prop() readonly roomConfig!: RoomConfig;
   @Prop() readonly globalStore!: GlobalStore;
-  private gameStore: GameStore = new GameStore(this.roomConfig, true);
+  private gameStore: GameStore = new GameStore(true);
+  private isShowConfig = false;
+
   mounted() {
     //this.resetCards();
   }
@@ -74,6 +77,18 @@ export default class CardRoom extends Vue {
     for (let index = 0; index < this.roomConfig.numberOfPlayers; index++) {
       this.gameStore.freeSeat(index);
     }
+  }
+
+  showConfig() {
+    this.isShowConfig = true;
+  }
+
+  hideConfig() {
+    this.isShowConfig = false;
+  }
+
+  get roomConfig() {
+    return this.gameStore.roomConfig;
   }
 }
 </script>

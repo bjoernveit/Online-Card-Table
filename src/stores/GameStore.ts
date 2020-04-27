@@ -3,45 +3,28 @@ import { CardData, CardState, CardLocation } from "@/classes/CardData";
 import { StandardDeck } from "@/classes/StandardDeck";
 import { User } from "@/classes/User";
 import { SeatData } from "@/classes/SeatData";
-import { cardsRef, seatsRef, roomRef } from "@/firebase";
+import { cardsRef, seatsRef, roomConfigRef, roomRef } from "@/firebase";
 import { EMPTY_SEAT, TABLE_ID } from "@/Constants";
-import { RGBAColor } from "@/classes/RGBAColor";
+import { HTMLColor } from "@/classes/HTMLColor";
+import { STANDARD_CARD_CONFIG } from "@/interfaces/Deck";
 
 export class GameStore {
   public cards: Array<CardData> = [];
   public seats: Array<SeatData> = [];
+  public roomConfig: RoomConfig = new RoomConfig(STANDARD_CARD_CONFIG, 8);
 
   public isReady = false;
 
-  private cardsReady = false;
-  private seatsReady = false;
-
-  constructor(public roomConfig: RoomConfig, private isDebug: boolean = false) {
-    cardsRef.once("value", this.setCardsOfSnapshot.bind(this));
+  constructor(private isDebug: boolean = false) {
+    roomRef.once("value", this.roomInitOfSnapshot.bind(this));
+    //cardsRef.once("value", this.setCardsOfSnapshot.bind(this));
     cardsRef.on("value", this.setCardsOfSnapshot.bind(this));
 
-    seatsRef.once("value", this.setSeatsOfSnapshot.bind(this));
+    //seatsRef.once("value", this.setSeatsOfSnapshot.bind(this));
     seatsRef.on("value", this.setSeatsOfSnapshot.bind(this));
-  }
 
-  public setCardsOfSnapshot(cardsSnapshot: firebase.database.DataSnapshot) {
-    this.cards = [];
-    if (cardsSnapshot.val()) {
-      cardsSnapshot.val().forEach((card: any) => {
-        this.cards.push(CardData.fromPojo(card));
-      });
-      this.cardsReady = true;
-    }
-    this.isReady = this.seatsReady;
-  }
-
-  public setSeatsOfSnapshot(seatsSnapshot: firebase.database.DataSnapshot) {
-    this.seats = [];
-    seatsSnapshot.val().forEach((seat: any) => {
-      this.seats.push(SeatData.fromPojo(seat));
-    });
-    this.seatsReady = true;
-    this.isReady = this.cardsReady;
+    //roomConfigRef.once("value", this.setRoomConfigOfSnapshot.bind(this));
+    roomConfigRef.on("value", this.setRoomConfigOfSnapshot.bind(this));
   }
 
   public resetCards(): void {
@@ -153,6 +136,10 @@ export class GameStore {
     }
   }
 
+  public setRoomConfig(config: RoomConfig) {
+    roomConfigRef.set(config);
+  }
+
   public freeSeat(index: number) {
     if (this.isValidIndex(index, this.seats)) {
       seatsRef
@@ -171,7 +158,7 @@ export class GameStore {
     const initialData: GameStoreData = {
       cards: new StandardDeck(this.roomConfig.deckConfig).cards,
       seats: emptySeats,
-      roomConfig: this.roomConfig
+      roomConfig: this.roomConfig,
     };
     console.log(initialData);
     roomRef.set(initialData);
@@ -194,10 +181,74 @@ export class GameStore {
     return htmlParentElement;
   }
 
+  private roomInitOfSnapshot(snapshot: firebase.database.DataSnapshot) {
+    let isError = false;
+    if (snapshot.val()) {
+      //init cards
+      if (snapshot.val().cards) {
+        //reset list
+        this.cards = [];
+        snapshot.val().cards.forEach((card: any) => {
+          this.cards.push(CardData.fromPojo(card));
+        });
+      } else {
+        isError = true;
+      }
+
+      //init seats
+      if (snapshot.val().seats) {
+        //reset seats
+        this.seats = [];
+        snapshot.val().seats.forEach((seat: any) => {
+          this.seats.push(SeatData.fromPojo(seat));
+        });
+      } else {
+        isError = true;
+      }
+
+      //init roomConfig
+      if (snapshot.val().roomConfig) {
+        this.roomConfig = RoomConfig.fromPojo(snapshot.val().roomConfig);
+      } else {
+        isError = true;
+      }
+    }
+    if (isError) {
+      this.log(
+        "Error: Something is wrong, GameStore could not be initializied correctly with the given firebase data."
+      );
+    } else {
+      this.isReady = true;
+      this.log("Initialization with firebase data complete.");
+    }
+  }
+
   private log(text: string) {
     if (this.isDebug) {
       console.log(`[GameStore]: ${text}`);
     }
+  }
+
+  private setCardsOfSnapshot(cardsSnapshot: firebase.database.DataSnapshot) {
+    this.cards = [];
+    if (cardsSnapshot.val()) {
+      cardsSnapshot.val().forEach((card: any) => {
+        this.cards.push(CardData.fromPojo(card));
+      });
+    }
+  }
+
+  private setSeatsOfSnapshot(seatsSnapshot: firebase.database.DataSnapshot) {
+    this.seats = [];
+    seatsSnapshot.val().forEach((seat: any) => {
+      this.seats.push(SeatData.fromPojo(seat));
+    });
+  }
+
+  private setRoomConfigOfSnapshot(
+    configSnapshot: firebase.database.DataSnapshot
+  ) {
+    this.roomConfig = RoomConfig.fromPojo(configSnapshot.val());
   }
 }
 

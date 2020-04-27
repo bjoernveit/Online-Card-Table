@@ -74,7 +74,7 @@ export default class Card extends Vue {
   }
 
   get colorCSS() {
-    return `color: ${this.cardData.getColor().getRGBAString()};`;
+    return `color: ${this.cardData.getColor().rgbaString};`;
   }
 
   get id() {

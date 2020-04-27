@@ -1,4 +1,4 @@
-import { RGBAColor } from "./RGBAColor";
+import { HTMLColor } from "./HTMLColor";
 import { User } from "./User";
 import { EMPTY_SEAT } from "@/Constants";
 
@@ -42,7 +42,7 @@ export class CardState {
 export class CardData {
   constructor(
     private value: string,
-    private color: RGBAColor,
+    private color: HTMLColor,
     public state: CardState
   ) {}
 
@@ -50,14 +50,14 @@ export class CardData {
     return this.value;
   }
 
-  getColor(): RGBAColor {
+  getColor(): HTMLColor {
     return this.color;
   }
 
   static fromPojo(pojo: any): CardData {
     return new CardData(
       pojo.value,
-      RGBAColor.fromPojo(pojo.color),
+      HTMLColor.fromPojo(pojo.color),
       CardState.fromPojo(pojo.state)
     );
   }

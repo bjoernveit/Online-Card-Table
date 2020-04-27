@@ -1,5 +1,5 @@
 import { CardData, CardState, CardLocation } from "@/classes/CardData";
-import { RGBAColor } from "@/classes/RGBAColor";
+import { HTMLColor } from "@/classes/HTMLColor";
 import { TABLE_ID, EMPTY_SEAT } from "@/Constants";
 export interface Deck {
   cards: Array<CardData>;
@@ -17,7 +17,7 @@ export interface DeckConstructor {
 
 export interface DeckConfig {
   cardFaces: Array<string[]>;
-  cardColors: Array<RGBAColor[]>;
+  cardColors: Array<HTMLColor[]>;
   defaultState?: CardState;
 }
 
@@ -34,14 +34,14 @@ export const STANDARD_CARD_FACES: Array<string> = [
   "T",
   "J",
   "Q",
-  "K"
+  "K",
 ];
 
-export const STANDARD_CARD_COLORS: Array<RGBAColor> = [
-  new RGBAColor(182, 5, 5),
-  new RGBAColor(10, 168, 6),
-  new RGBAColor(0, 0, 0),
-  new RGBAColor(36, 93, 203)
+export const STANDARD_CARD_COLORS: Array<HTMLColor> = [
+  new HTMLColor(182, 5, 5),
+  new HTMLColor(10, 168, 6),
+  new HTMLColor(0, 0, 0),
+  new HTMLColor(36, 93, 203),
 ];
 
 export const STANDARD_CARD_CONFIG: DeckConfig = {
@@ -50,6 +50,6 @@ export const STANDARD_CARD_CONFIG: DeckConfig = {
   defaultState: {
     isFaceUp: false,
     location: new CardLocation(TABLE_ID, 100, 100),
-    owner: EMPTY_SEAT
-  }
+    owner: EMPTY_SEAT,
+  },
 };
