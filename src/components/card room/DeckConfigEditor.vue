@@ -17,51 +17,71 @@
 
             <input
               @input="
-              e => {
-                handleInput(e, collectionIndex);
-              }
-            "
+                (e) => {
+                  handleInput(e, collectionIndex);
+                }
+              "
               class="form-control col"
               type="text"
               :placeholder="commaSeparatedFaceCollections[collectionIndex]"
               id="example-text-input"
             />
-            <div class="col-1" style="margin-top: 7px;">
+            <!-- <div class="col-1" style="margin-top: 7px;">
               <fa-icon icon="times" />
             </div>
-            <input class="form-control col-2" type="number" value="1" id="number-input1" min="1" />
+            <input
+              class="form-control col-2"
+              type="number"
+              value="1"
+              id="number-input1"
+              min="1"
+            /> -->
           </div>
           <label :for="'colorCollection-' + collectionIndex">in Colors:</label>
-          <div :id="'colorCollection-' + collectionIndex" class="form-group row">
+          <div
+            :id="'colorCollection-' + collectionIndex"
+            class="form-group row"
+          >
             <input
               v-for="(color, index) in colorCollections[collectionIndex]"
               :key="'deck-color-' + index"
               class="form-control colorpicker col-2 m-1"
               @change="
-              e => {
-                handleColorPicker(e, collectionIndex, index);
-              }
-            "
+                (e) => {
+                  handleColorPicker(e, collectionIndex, index);
+                }
+              "
               :value="color.hexString"
               type="color"
             />
-            <button class="btn col-2 m-1" @click.prevent="addColor(collectionIndex)">
+            <button
+              class="btn col-2 m-1"
+              @click.prevent="addColor(collectionIndex)"
+            >
               <fa-icon icon="plus" size="2x" />
             </button>
           </div>
           <hr />
         </div>
         <div class="row">
-          <button class="btn col btn-outline-darkm-1" style @click.prevent="addCollection">
+          <button
+            class="btn col btn-outline-darkm-1"
+            style
+            @click.prevent="addCollection"
+          >
             <fa-icon icon="plus" />More Cards
           </button>
         </div>
         <hr />
-        <button class="btn col-2 m-1 btn-success" @click.prevent="save">Save</button>
+        <button class="btn col-2 m-1 btn-success" @click.prevent="save">
+          Save
+        </button>
         <button
           class="btn col-2 m-1 btn-danger float-right"
           @click.prevent="$emit('hide-config')"
-        >Close</button>
+        >
+          Close
+        </button>
       </form>
     </div>
   </div>
@@ -90,9 +110,9 @@ export default class DeckConfigEditor extends Vue {
   }
   get commaSeparatedFaceCollections() {
     const seperatedCollections: Array<string> = [];
-    this.faceCollections.forEach(collection => {
+    this.faceCollections.forEach((collection) => {
       let values = "";
-      collection.forEach(face => {
+      collection.forEach((face) => {
         values += face + ",";
       });
       seperatedCollections.push(values);
