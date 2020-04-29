@@ -44,19 +44,15 @@ export function cardDrop(
       cardElement.classList.remove("dragging");
 
       //move card
-      if (
-        gameStore.moveCard(
-          index,
-          cardElement,
-          new CardLocation(
-            target.id,
-            e.offsetX - mouseOffsetX,
-            e.offsetY - mouseOffsetY
-          )
+      gameStore.moveCard(
+        index,
+        cardElement,
+        new CardLocation(
+          target.id,
+          e.offsetX - mouseOffsetX,
+          e.offsetY - mouseOffsetY
         )
-      ) {
-        gameStore.setCardOwner(index, newOwner);
-      }
+      );
     }
   }
 }

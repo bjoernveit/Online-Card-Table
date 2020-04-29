@@ -21,7 +21,7 @@
         <div style="position:absolute;bottom:3%;left:50%;transform:translate(-50%,0);display:flex;">
           <button class="btn btn-lg btn-success" @click="resetCards">Reset Cards</button>
           <button class="btn btn-lg btn-danger" @click="resetSeats">Reset Seats</button>
-          <button class="btn btn-lg btn-dark" @click="showConfig">
+          <button class="btn btn-lg btn-dark" @click="showConfig" style="width: 52px">
             <fa-icon icon="tools" size="1x" />
           </button>
         </div>

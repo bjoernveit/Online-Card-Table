@@ -18,9 +18,9 @@ export class CardLocation {
 export class CardState {
   constructor(
     public isFaceUp: boolean,
-    public location: CardLocation,
-    public owner: User | string = EMPTY_SEAT
-  ) {
+    public location: CardLocation
+  ) //public owner: User | string = EMPTY_SEAT
+  {
     CardState.prototype.toString = this.toString;
   }
 
@@ -33,8 +33,8 @@ export class CardState {
   static fromPojo(pojo: any): CardState {
     return new CardState(
       pojo.isFaceUp,
-      CardLocation.fromPojo(pojo.location),
-      pojo.owner != EMPTY_SEAT ? User.fromPojo(pojo.owner) : EMPTY_SEAT
+      CardLocation.fromPojo(pojo.location)
+      //pojo.owner != EMPTY_SEAT ? User.fromPojo(pojo.owner) : EMPTY_SEAT
     );
   }
 }

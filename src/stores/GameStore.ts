@@ -5,8 +5,8 @@ import { User } from "@/classes/User";
 import { SeatData } from "@/classes/SeatData";
 import { cardsRef, seatsRef, roomConfigRef, roomRef } from "@/firebase";
 import { EMPTY_SEAT, TABLE_ID } from "@/Constants";
-import { HTMLColor } from "@/classes/HTMLColor";
 import { STANDARD_CARD_CONFIG } from "@/interfaces/Deck";
+import { IdFactory } from "@/classes/IdFactory";
 
 export class GameStore {
   public cards: Array<CardData> = [];
@@ -44,24 +44,24 @@ export class GameStore {
     }
   }
 
-  public setCardOwner(index: number, owner: User | string) {
-    if (
-      this.isValidIndex(index, this.cards) &&
-      this.cards[index].state.owner != owner
-    ) {
-      if (owner != EMPTY_SEAT) {
-        this.log(`Setting card owner to ${owner} for Card-${index}.`);
-      } else {
-        this.log(`Resetting card ownership of Card-${index}.`);
-      }
-      cardsRef
-        .child(index + "")
-        .child("state")
-        .child("owner")
-        .set(owner);
-      //this.cards[index].state.owner = owner;
-    }
-  }
+  // public setCardOwner(index: number, owner: User | string) {
+  //   if (
+  //     this.isValidIndex(index, this.cards) &&
+  //     this.cards[index].state.owner != owner
+  //   ) {
+  //     if (owner != EMPTY_SEAT) {
+  //       this.log(`Setting card owner to ${owner} for Card-${index}.`);
+  //     } else {
+  //       this.log(`Resetting card ownership of Card-${index}.`);
+  //     }
+  //     cardsRef
+  //       .child(index + "")
+  //       .child("state")
+  //       .child("owner")
+  //       .set(owner);
+  //     //this.cards[index].state.owner = owner;
+  //   }
+  // }
 
   public flipCard(index: number) {
     if (this.isValidIndex(index, this.cards)) {
@@ -92,8 +92,8 @@ export class GameStore {
 
         const updatedCardState: CardState = new CardState(
           formTable && toUser ? false : this.cards[index].state.isFaceUp,
-          newLocation,
-          this.cards[index].state.owner
+          newLocation
+          //this.cards[index].state.owner
         );
 
         cardsRef
@@ -122,7 +122,7 @@ export class GameStore {
     }
   }
 
-  public placeUser(index: number, user: User) {
+  public takeSeat(index: number, user: User) {
     if (this.isValidIndex(index, this.seats)) {
       if (this.seats[index].isFree()) {
         this.log(`${user} is sitting down on seat ${index}.`);

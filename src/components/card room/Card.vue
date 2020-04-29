@@ -45,6 +45,7 @@ import { GameStore } from "@/stores/GameStore";
 import { TABLE_ID, EMPTY_SEAT } from "@/Constants";
 import { GlobalStore } from "../../stores/GlobalStore";
 import { User } from "@/classes/User";
+import { IdFactory } from "@/classes/IdFactory";
 
 interface TouchDragInfo {
   startXAbsolute: string;
@@ -65,12 +66,18 @@ export default class Card extends Vue {
   }
 
   get isFaceUp() {
-    const cardHasOwner = this.cardData.state.owner != EMPTY_SEAT;
-    const isUserTheOwner =
-      cardHasOwner &&
-      (this.cardData.state.owner as User).getUid() ===
-        (this.globalStore.user as User).getUid();
-    return this.cardData.state.isFaceUp || isUserTheOwner;
+    if (this.cardData.state.location.placedOnId === IdFactory.getTableId()) {
+      return this.cardData.state.isFaceUp;
+    } else {
+      const placedOnSeatIndex = IdFactory.getIndexOfId(
+        this.cardData.state.location.placedOnId
+      );
+      const isUserTheOwner =
+        this.gameStore.seats[placedOnSeatIndex].owner != EMPTY_SEAT &&
+        (this.gameStore.seats[placedOnSeatIndex].owner as User).getUid() ===
+          (this.globalStore.user as User).getUid();
+      return isUserTheOwner;
+    }
   }
 
   get colorCSS() {
@@ -78,7 +85,7 @@ export default class Card extends Vue {
   }
 
   get id() {
-    return "Card-" + this.index;
+    return IdFactory.getCardId(this.index);
   }
 
   get cardData() {
@@ -151,7 +158,6 @@ export default class Card extends Vue {
       this.htmlElement.style.top != `${this.cardData.state.location.y}px` ||
       this.htmlElement.style.left != `${this.cardData.state.location.x}px`
     ) {
-      //TODO: make this client change only
       this.gameStore.repositionCardLocally(this.index, this.htmlElement);
     }
   }
@@ -165,5 +171,5 @@ export default class Card extends Vue {
   }
 }
 </script>
-d
+
 <style lang="stylus"></style>

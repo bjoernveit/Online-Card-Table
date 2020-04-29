@@ -35,6 +35,7 @@ import { GameStore } from "@/stores/GameStore";
 import { GlobalStore } from "@/stores/GlobalStore";
 import * as DragEventHandler from "@/functions/DragEventListeners";
 import { EMPTY_SEAT } from "@/Constants";
+import { IdFactory } from "@/classes/IdFactory";
 
 @Component
 export default class PlayerArea extends Vue {
@@ -62,8 +63,9 @@ export default class PlayerArea extends Vue {
   }
 
   get id() {
-    return "player-area-" + this.index;
+    return IdFactory.getPlayerAreaId(this.index);
   }
+
   dragLeave(e: DragEvent) {
     DragEventHandler.dragLeave(e);
   }
@@ -78,20 +80,11 @@ export default class PlayerArea extends Vue {
 
   sitDown() {
     if (this.globalStore.user) {
-      this.gameStore.placeUser(this.index, this.globalStore.user as User);
+      this.gameStore.takeSeat(this.index, this.globalStore.user as User);
       document.addEventListener("beforeunload", () => {
         this.gameStore.freeSeat(this.index);
       });
     }
-  }
-
-  @Watch("owner")
-  onOwnerChange() {
-    this.gameStore.cards.forEach((card, index) => {
-      if (card.state.location.placedOnId == this.id) {
-        this.gameStore.setCardOwner(index, this.globalStore.user as User);
-      }
-    });
   }
 }
 </script>
