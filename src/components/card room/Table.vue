@@ -15,13 +15,13 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GameStore } from "@/stores/GameStore";
 import { CardLocation } from "@/classes/CardData";
-import { TABLE_ID } from "@/Constants";
+import { IdFactory } from "@/classes/IdFactory";
 import * as DragEventHandler from "@/functions/DragEventListeners";
 
 @Component({})
 export default class CardTable extends Vue {
   @Prop(GameStore) readonly gameStore!: GameStore;
-  private readonly id = TABLE_ID;
+  private readonly id = IdFactory.getTableId();
 
   dragLeave(e: DragEvent) {
     DragEventHandler.dragLeave(e);

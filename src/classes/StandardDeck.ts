@@ -1,7 +1,7 @@
 import { Deck, DeckConfig, DeckConstructor } from "@/interfaces/Deck";
 import { CardData, CardState, CardLocation } from "./CardData";
 import { HTMLColor } from "./HTMLColor";
-import { TABLE_ID } from "@/Constants";
+import { IdFactory } from "./IdFactory";
 export class StandardDeck implements Deck {
   cards: CardData[] = [];
 
@@ -23,7 +23,7 @@ export class StandardDeck implements Deck {
     if (config.defaultState === undefined) {
       config.defaultState = new CardState(
         false,
-        new CardLocation(TABLE_ID, 100, 100)
+        new CardLocation(IdFactory.getTableId(), 100, 100)
       );
     }
 

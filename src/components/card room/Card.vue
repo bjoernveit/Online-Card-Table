@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GameStore } from "@/stores/GameStore";
-import { TABLE_ID, EMPTY_SEAT } from "@/Constants";
+import { EMPTY_SEAT } from "@/Constants";
 import { GlobalStore } from "../../stores/GlobalStore";
 import { User } from "@/classes/User";
 import { IdFactory } from "@/classes/IdFactory";

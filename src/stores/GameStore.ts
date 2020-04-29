@@ -4,7 +4,7 @@ import { StandardDeck } from "@/classes/StandardDeck";
 import { User } from "@/classes/User";
 import { SeatData } from "@/classes/SeatData";
 import { cardsRef, seatsRef, roomConfigRef, roomRef } from "@/firebase";
-import { EMPTY_SEAT, TABLE_ID } from "@/Constants";
+import { EMPTY_SEAT } from "@/Constants";
 import { STANDARD_CARD_CONFIG } from "@/interfaces/Deck";
 import { IdFactory } from "@/classes/IdFactory";
 
@@ -79,8 +79,9 @@ export class GameStore {
     cardElement: HTMLElement,
     newLocation: CardLocation
   ): boolean {
-    const formTable = this.cards[index].state.location.placedOnId === TABLE_ID;
-    const toUser = newLocation.placedOnId != TABLE_ID;
+    const formTable =
+      this.cards[index].state.location.placedOnId === IdFactory.getTableId();
+    const toUser = newLocation.placedOnId != IdFactory.getTableId();
     if (this.isValidIndex(index, this.cards)) {
       const htmlParentElement = this.getHTMLElementFromId(
         newLocation.placedOnId

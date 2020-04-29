@@ -1,6 +1,6 @@
 import { CardData, CardState, CardLocation } from "@/classes/CardData";
 import { HTMLColor } from "@/classes/HTMLColor";
-import { TABLE_ID } from "@/Constants";
+import { IdFactory } from "@/classes/IdFactory";
 export interface Deck {
   cards: Array<CardData>;
 
@@ -49,7 +49,7 @@ export const STANDARD_CARD_CONFIG: DeckConfig = {
   cardColors: [STANDARD_CARD_COLORS],
   defaultState: {
     isFaceUp: false,
-    location: new CardLocation(TABLE_ID, 100, 100),
+    location: new CardLocation(IdFactory.getTableId(), 100, 100),
     //owner: EMPTY_SEAT,
   },
 };
