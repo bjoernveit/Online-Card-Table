@@ -33,7 +33,12 @@
         <div style="position:absolute;bottom:3%;left:50%;transform:translate(-50%,0);display:flex;">
           <button class="btn btn-lg btn-success" @click="gameStore.resetCards()">Reset Cards</button>
           <button class="btn btn-lg btn-danger" @click="resetSeats">Reset Seats</button>
-          <button class="btn btn-lg btn-dark" @click="showConfig" style="width: 52px">
+          <button
+            v-if="isUserOwner"
+            class="btn btn-lg btn-dark"
+            @click="showConfig"
+            style="width: 52px"
+          >
             <fa-icon icon="tools" size="1x" />
           </button>
         </div>
@@ -66,6 +71,7 @@ import PlayerArea from "./PlayerArea.vue";
 import DeckConfigEditor from "./DeckConfigEditor.vue";
 import { GameStore } from "@/stores/GameStore";
 import { GlobalStore } from "@/stores/GlobalStore";
+import { User } from "@/classes/User";
 
 @Component({
   components: {
@@ -77,6 +83,7 @@ import { GlobalStore } from "@/stores/GlobalStore";
 })
 export default class CardRoom extends Vue {
   @Prop() readonly globalStore!: GlobalStore;
+  @Prop(String) readonly ownerUId!: string;
   private isShowConfig = false;
 
   mounted() {
@@ -104,6 +111,16 @@ export default class CardRoom extends Vue {
 
   get roomConfig() {
     return this.gameStore.roomConfig;
+  }
+
+  get isUserOwner() {
+    const roomData = this.globalStore.rooms.get(this.globalStore.activeRoomKey);
+    if (roomData != undefined) {
+      return (
+        roomData.owner.getUid() === (this.globalStore.user as User).getUid()
+      );
+    }
+    return false;
   }
 }
 </script>

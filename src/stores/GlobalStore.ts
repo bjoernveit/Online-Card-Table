@@ -11,6 +11,7 @@ export class GlobalStore {
   public user: User | null;
   public rooms = new Map<string, RoomData>();
   public activeRoom: GameStore | null = null;
+  public activeRoomKey = "";
   public isReady = false;
   public activeView: View;
 
@@ -105,6 +106,7 @@ export class GlobalStore {
   public joinRoom(roomKey: string) {
     if (roomKey != "") {
       this.log(`Joining room with key ${roomKey}.`);
+      this.activeRoomKey = roomKey;
       this.activeRoom = new GameStore(roomKey, true);
       this.activeView = View.CardTable;
     }
@@ -112,6 +114,7 @@ export class GlobalStore {
 
   public leaveRoom() {
     this.log(`Leaving room current room.`);
+    this.activeRoomKey = "";
     this.activeRoom = null;
     this.activeView = View.Lobby;
   }

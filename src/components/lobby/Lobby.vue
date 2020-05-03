@@ -5,7 +5,7 @@
       <div class="row header">
         <div class="col-8">Room Name</div>
         <div class="col-1 text-center">Seats</div>
-        <div class="col text-center">Creator</div>
+        <div class="col text-center">Owner</div>
         <div class="col text-center">created</div>
       </div>
       <hr />
