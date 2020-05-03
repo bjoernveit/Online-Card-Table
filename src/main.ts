@@ -7,7 +7,8 @@ import {
   faTimes,
   faTools,
   faPlus,
-  faTrash
+  faTrash,
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -15,10 +16,11 @@ library.add(faTimes);
 library.add(faTools);
 library.add(faPlus);
 library.add(faTrash);
+library.add(faInfoCircle);
 
 Vue.component("fa-icon", FontAwesomeIcon);
 Vue.config.productionTip = false;
 
 new Vue({
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");

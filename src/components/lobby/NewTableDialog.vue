@@ -12,7 +12,7 @@
       </div>
       <div class="col-4">
         <input
-          id="roomNameInput"
+          id="roomPwInput"
           type="text"
           v-model="password"
           placeholder="Password (optional)"

@@ -3,6 +3,7 @@ import { CardData, CardState, CardLocation } from "./CardData";
 import { HTMLColor } from "./HTMLColor";
 import { IdFactory } from "./IdFactory";
 export class StandardDeck implements Deck {
+  private cardsInOrder: CardData[] = [];
   cards: CardData[] = [];
 
   pop(): CardData {
@@ -31,12 +32,22 @@ export class StandardDeck implements Deck {
       group.forEach((color: HTMLColor) => {
         config.cardFaces[index].forEach((face: string) => {
           this.cards.push(
-            new CardData(face, color, { ...(config.defaultState as CardState) })
+            new CardData(face, color, {
+              ...(config.defaultState as CardState),
+            })
+          );
+          this.cardsInOrder.push(
+            new CardData(face, color, {
+              ...(config.defaultState as CardState),
+            })
           );
         });
       });
     });
 
     this.shuffle();
+  }
+  getCardsInOrder(): CardData[] {
+    return this.cardsInOrder;
   }
 }

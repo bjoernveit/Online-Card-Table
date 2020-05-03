@@ -126,9 +126,11 @@ export class GlobalStore {
   private loadRoomsOfSnapshot(snapshot: firebase.database.DataSnapshot) {
     const newRoomMap = new Map<string, RoomData>();
     const snapshotValue = snapshot.val();
-    Object.entries(snapshotValue).forEach((entry) => {
-      newRoomMap.set(entry[0], RoomData.fromPojo(entry[1]));
-    });
+    if (snapshotValue) {
+      Object.entries(snapshotValue).forEach((entry) => {
+        newRoomMap.set(entry[0], RoomData.fromPojo(entry[1]));
+      });
+    }
     this.rooms = newRoomMap;
     this.isReady = true;
   }

@@ -50,25 +50,6 @@ export class GameStore {
     }
   }
 
-  // public setCardOwner(index: number, owner: User | string) {
-  //   if (
-  //     this.isValidIndex(index, this.cards) &&
-  //     this.cards[index].state.owner != owner
-  //   ) {
-  //     if (owner != EMPTY_SEAT) {
-  //       this.log(`Setting card owner to ${owner} for Card-${index}.`);
-  //     } else {
-  //       this.log(`Resetting card ownership of Card-${index}.`);
-  //     }
-  //     cardsRef
-  //       .child(index + "")
-  //       .child("state")
-  //       .child("owner")
-  //       .set(owner);
-  //     //this.cards[index].state.owner = owner;
-  //   }
-  // }
-
   public flipCard(index: number) {
     if (this.isValidIndex(index, this.cards)) {
       this.log(`Flipping Card-${index}.`);

@@ -15,7 +15,18 @@
         :key="key"
         @click="joinRoom(key)"
       >
-        <div class="col-8">
+        <div class="col-8" d>
+          <span class="preview-icon__wrapper">
+            <fa-icon class="preview-icon" icon="info-circle" />
+            <div class="card-preview">
+              <div
+                v-for="(cardData, index) in roomCardsInOrder(room)"
+                :key="key + '#PreviewCard#' + index"
+                class="card-preview__card"
+                :style="previewCardCSS(index, roomCardsInOrder(room).length, cardData)"
+              >{{cardData.value}}</div>
+            </div>
+          </span>
           {{ room.title }}
           <div class="float-right" v-if="room.owner.uid === globalStore.user.uid">
             <fa-icon
@@ -46,6 +57,9 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GlobalStore } from "@/stores/GlobalStore";
 import NewTableDialog from "./NewTableDialog.vue";
+import { RoomData } from "../../classes/RoomData";
+import { StandardDeck } from "../../classes/StandardDeck";
+import { CardData } from "../../classes/CardData";
 
 @Component({
   components: {
@@ -63,6 +77,12 @@ export default class Lobby extends Vue {
 
   joinRoom(key: string) {
     this.globalStore.joinRoom(key);
+  }
+
+  roomCardsInOrder(roomData: RoomData) {
+    return new StandardDeck(
+      roomData.gameStoreData.roomConfig.deckConfig
+    ).getCardsInOrder();
   }
 
   getCreatedString(createdAt: Date) {
@@ -84,6 +104,12 @@ export default class Lobby extends Vue {
     } else {
       return `${diffDays} days ago`;
     }
+  }
+
+  previewCardCSS(index: number, numberOfCards: number, cardData: CardData) {
+    const color = `color: ${cardData.getColor().rgbaString};`;
+    //const pos = `right: ${Math.floor((index / numberOfCards) * 100)}%;`;
+    return color;
   }
 
   deleteCardRoom(e: MouseEvent, roomKey: string) {
@@ -119,6 +145,32 @@ export default class Lobby extends Vue {
 
     & .delete-icon:hover {
       color: red;
+    }
+
+    & .card-preview {
+      display: none;
+      position: absolute;
+      width: 100%;
+      top: 100%;
+      left: 0;
+      background: #1c1c1c;
+      padding: 3px;
+      border-radius: 3px;
+      z-index: 99;
+
+      &__card {
+        text-align: center;
+        width: 5%;
+        margin: 2px;
+        padding: 1px;
+        background: #fff;
+        box-shadow: 0 0 1px #fff;
+      }
+    }
+
+    & .preview-icon__wrapper:hover .card-preview {
+      display: flex;
+      flex-wrap: wrap;
     }
   }
 }
