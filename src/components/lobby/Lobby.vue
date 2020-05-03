@@ -4,9 +4,7 @@
       <!-- <h1>Hi I'm the Lobby</h1> -->
       <div class="row header">
         <div class="col-8">Room Name</div>
-        <div class="col-1 text-center">
-          Seats
-        </div>
+        <div class="col-1 text-center">Seats</div>
         <div class="col text-center">Creator</div>
         <div class="col text-center">created</div>
       </div>
@@ -17,14 +15,22 @@
         :key="key"
         @click="joinRoom(key)"
       >
-        <div class="col-8">{{ room.title }}</div>
-        <div class="col-1 text-center">
-          {{ room.gameStoreData.roomConfig.numberOfPlayers }}
+        <div class="col-8">
+          {{ room.title }}
+          <div class="float-right" v-if="room.owner.uid === globalStore.user.uid">
+            <fa-icon
+              class="delete-icon"
+              title="delete room"
+              icon="trash"
+              @click.prevent="(e) => deleteCardRoom(e, key)"
+              size
+            />
+          </div>
         </div>
+
+        <div class="col-1 text-center">{{ room.gameStoreData.roomConfig.numberOfPlayers }}</div>
         <div class="col text-center">{{ room.owner }}</div>
-        <div class="col text-center">
-          {{ getCreatedString(room.getCreationDate()) }}
-        </div>
+        <div class="col text-center">{{ getCreatedString(room.getCreationDate()) }}</div>
       </div>
 
       <hr />
@@ -43,8 +49,8 @@ import NewTableDialog from "./NewTableDialog.vue";
 
 @Component({
   components: {
-    NewTableDialog,
-  },
+    NewTableDialog
+  }
 })
 export default class Lobby extends Vue {
   @Prop(GlobalStore) readonly globalStore!: GlobalStore;
@@ -79,6 +85,11 @@ export default class Lobby extends Vue {
       return `${diffDays} days ago`;
     }
   }
+
+  deleteCardRoom(e: MouseEvent, roomKey: string) {
+    e.stopPropagation();
+    this.globalStore.deleteCardRoom(roomKey);
+  }
 }
 </script>
 
@@ -104,6 +115,10 @@ export default class Lobby extends Vue {
     &:hover {
       background: rgba(0, 0, 0, 0.1);
       box-shadow: 0 0 4px #000;
+    }
+
+    & .delete-icon:hover {
+      color: red;
     }
   }
 }

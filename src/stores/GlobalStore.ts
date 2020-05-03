@@ -75,6 +75,10 @@ export class GlobalStore {
       });
   }
 
+  public deleteCardRoom(roomKey: string) {
+    roomsRef.child(roomKey).remove();
+  }
+
   public async createCardRoom(
     title: string,
     roomConfig: RoomConfig,
