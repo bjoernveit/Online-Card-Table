@@ -84,24 +84,30 @@ export class GlobalStore {
     roomConfig: RoomConfig,
     password = ""
   ): Promise<string> {
-    this.log(`creating Room: ${title}.`);
-    const newRoom = new RoomData(
-      title,
-      roomConfig,
-      this.user as User,
-      password
-    );
-    newRoom.init();
+    if (title.trim() != "") {
+      this.log(`creating Room: ${title}.`);
+      const newRoom = new RoomData(
+        title,
+        roomConfig,
+        this.user as User,
+        password
+      );
+      newRoom.init();
 
-    const newRef = await roomsRef.push(newRoom);
+      const newRef = await roomsRef.push(newRoom);
 
-    return newRef.key as string;
+      return newRef.key as string;
+    } else {
+      this.log(`creating Room failed because title was empty.`);
+      return "";
+    }
   }
-
   public joinRoom(roomKey: string) {
-    this.log(`Joining room with key ${roomKey}.`);
-    this.activeRoom = new GameStore(roomKey, true);
-    this.activeView = View.CardTable;
+    if (roomKey != "") {
+      this.log(`Joining room with key ${roomKey}.`);
+      this.activeRoom = new GameStore(roomKey, true);
+      this.activeView = View.CardTable;
+    }
   }
 
   public leaveRoom() {

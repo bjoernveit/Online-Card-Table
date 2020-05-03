@@ -33,9 +33,8 @@
         <button
           class="btn btn-success float-right"
           @click.prevent="createAndJoinRoom"
-        >
-          Create Room
-        </button>
+          :disabled="name.trim() === ''"
+        >Create Room</button>
       </div>
     </form>
   </div>
@@ -61,7 +60,7 @@ export default class NewTableDialog extends Vue {
         new RoomConfig(STANDARD_CARD_CONFIG, this.numberOfSeats),
         this.password
       )
-      .then((key) => {
+      .then(key => {
         this.globalStore.joinRoom(key);
       });
   }
@@ -74,7 +73,7 @@ export default class NewTableDialog extends Vue {
   margin: auto;
   border-radius: 10px;
   background: #c4c4c4;
-  //padding: 20px;
+  // padding: 20px;
   box-sizing: border-box;
 }
 </style>
