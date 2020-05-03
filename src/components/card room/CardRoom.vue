@@ -1,8 +1,10 @@
 <template>
   <div class="card-room" v-if="gameStore.isReady">
-    <div class="player-area__wrapper">
+    <div v-if="roomConfig.numberOfPlayers > 0" class="player-area__wrapper">
       <PlayerArea
-        v-for="(_, index) in new Array(roomConfig.numberOfPlayers / 2)"
+        v-for="(_, index) in new Array(
+          Math.ceil(roomConfig.numberOfPlayers / 2)
+        )"
         :key="'PlayerArea' + index"
         :index="index"
         :gameStore="gameStore"
@@ -18,8 +20,18 @@
           :globalStore="globalStore"
           :index="index"
         ></Card>
+        <div class="float-right">
+          <fa-icon
+            class="m-3"
+            title="leave room"
+            icon="times"
+            @click="globalStore.leaveRoom()"
+            size="2x"
+          />
+        </div>
+
         <div style="position:absolute;bottom:3%;left:50%;transform:translate(-50%,0);display:flex;">
-          <button class="btn btn-lg btn-success" @click="resetCards">Reset Cards</button>
+          <button class="btn btn-lg btn-success" @click="gameStore.resetCards()">Reset Cards</button>
           <button class="btn btn-lg btn-danger" @click="resetSeats">Reset Seats</button>
           <button class="btn btn-lg btn-dark" @click="showConfig" style="width: 52px">
             <fa-icon icon="tools" size="1x" />
@@ -27,11 +39,15 @@
         </div>
       </Table>
     </div>
-    <div class="player-area__wrapper">
+    <div v-if="roomConfig.numberOfPlayers > 1" class="player-area__wrapper">
       <PlayerArea
-        v-for="(_, index) in new Array(roomConfig.numberOfPlayers / 2)"
-        :key="'PlayerArea' + (index + roomConfig.numberOfPlayers / 2)"
-        :index="index + roomConfig.numberOfPlayers / 2"
+        v-for="(_, index) in new Array(
+          Math.floor(roomConfig.numberOfPlayers / 2)
+        )"
+        :key="
+          'PlayerArea' + (index + Math.ceil(roomConfig.numberOfPlayers / 2))
+        "
+        :index="index + Math.ceil(roomConfig.numberOfPlayers / 2)"
         :gameStore="gameStore"
         :globalStore="globalStore"
       ></PlayerArea>
@@ -61,16 +77,11 @@ import { GlobalStore } from "@/stores/GlobalStore";
 })
 export default class CardRoom extends Vue {
   @Prop() readonly globalStore!: GlobalStore;
-  private gameStore: GameStore = new GameStore(true);
   private isShowConfig = false;
 
   mounted() {
     //this.resetCards();
-  }
-
-  resetCards() {
-    this.gameStore.resetCards();
-    //this.gameStore.initData();
+    Math.ceil;
   }
 
   resetSeats() {
@@ -85,6 +96,10 @@ export default class CardRoom extends Vue {
 
   hideConfig() {
     this.isShowConfig = false;
+  }
+
+  get gameStore() {
+    return this.globalStore.activeRoom as GameStore;
   }
 
   get roomConfig() {

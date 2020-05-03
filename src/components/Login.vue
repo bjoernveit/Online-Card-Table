@@ -72,6 +72,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { GlobalStore } from "@/stores/GlobalStore";
+import { View } from "../Constants";
 
 @Component
 export default class Login extends Vue {

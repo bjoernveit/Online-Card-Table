@@ -1,22 +1,26 @@
 <template>
   <div id="app">
     <Login :globalStore="globalStore" v-if="!isLoggedIn" />
-    <CardRoom :globalStore="globalStore" v-if="isLoggedIn" />
+    <div v-if="isLoggedIn">
+      <CardRoom :globalStore="globalStore" v-if="showCardTable" />
+      <Lobby :globalStore="globalStore" v-if="showLobby" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import CardRoom from "./components/card room/CardRoom.vue";
-import { STANDARD_CARD_CONFIG, STANDARD_CARD_COLORS } from "./interfaces/Deck";
-import { RoomConfig } from "@/classes/RoomConfig";
 import Login from "./components/Login.vue";
+import Lobby from "./components/lobby/Lobby.vue";
+import { Component, Vue } from "vue-property-decorator";
 import { GlobalStore } from "./stores/GlobalStore";
+import { View } from "./Constants";
 
 @Component({
   components: {
     CardRoom,
-    Login
+    Login,
+    Lobby
   }
 })
 export default class App extends Vue {
@@ -25,6 +29,14 @@ export default class App extends Vue {
 
   get isLoggedIn() {
     return this.globalStore.isLoggedIn();
+  }
+
+  get showCardTable() {
+    return this.globalStore.activeView === View.CardTable;
+  }
+
+  get showLobby() {
+    return this.globalStore.activeView === View.Lobby;
   }
 }
 </script>

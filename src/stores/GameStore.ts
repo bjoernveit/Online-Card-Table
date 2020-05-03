@@ -3,7 +3,7 @@ import { CardData, CardState, CardLocation } from "@/classes/CardData";
 import { StandardDeck } from "@/classes/StandardDeck";
 import { User } from "@/classes/User";
 import { SeatData } from "@/classes/SeatData";
-import { cardsRef, seatsRef, roomConfigRef, roomRef } from "@/firebase";
+import { roomsRef } from "@/firebase";
 import { EMPTY_SEAT } from "@/Constants";
 import { STANDARD_CARD_CONFIG } from "@/interfaces/Deck";
 import { IdFactory } from "@/classes/IdFactory";
@@ -12,23 +12,29 @@ export class GameStore {
   public cards: Array<CardData> = [];
   public seats: Array<SeatData> = [];
   public roomConfig: RoomConfig = new RoomConfig(STANDARD_CARD_CONFIG, 8);
+  private roomRef: firebase.database.Reference;
+  private seatsRef: firebase.database.Reference;
+  private cardsRef: firebase.database.Reference;
+  private roomConfigRef: firebase.database.Reference;
 
   public isReady = false;
 
-  constructor(private isDebug: boolean = false) {
-    roomRef.once("value", this.roomInitOfSnapshot.bind(this));
-    //cardsRef.once("value", this.setCardsOfSnapshot.bind(this));
-    cardsRef.on("value", this.setCardsOfSnapshot.bind(this));
+  constructor(private roomKey: string, private isDebug: boolean = false) {
+    this.roomRef = roomsRef.child(roomKey).child("gameStoreData");
+    this.seatsRef = this.roomRef.child("seats");
+    this.cardsRef = this.roomRef.child("cards");
+    this.roomConfigRef = this.roomRef.child("roomConfig");
+    // initial Setup
+    this.roomRef.once("value", this.roomInitOfSnapshot.bind(this));
 
-    //seatsRef.once("value", this.setSeatsOfSnapshot.bind(this));
-    seatsRef.on("value", this.setSeatsOfSnapshot.bind(this));
-
-    //roomConfigRef.once("value", this.setRoomConfigOfSnapshot.bind(this));
-    roomConfigRef.on("value", this.setRoomConfigOfSnapshot.bind(this));
+    // change listeners
+    this.cardsRef.on("value", this.setCardsOfSnapshot.bind(this));
+    this.seatsRef.on("value", this.setSeatsOfSnapshot.bind(this));
+    this.roomConfigRef.on("value", this.setRoomConfigOfSnapshot.bind(this));
   }
 
   public resetCards(): void {
-    cardsRef.set(new StandardDeck(this.roomConfig.deckConfig).cards);
+    this.cardsRef.set(new StandardDeck(this.roomConfig.deckConfig).cards);
     //this.cards = new StandardDeck(this.roomConfig.deckConfig).cards;
   }
 
@@ -37,7 +43,7 @@ export class GameStore {
       this.log(
         `Updating state of Card-${index}: from ${this.cards[index].state} to ${state}.`
       );
-      cardsRef
+      this.cardsRef
         .child(index + "")
         .child("state")
         .set(state);
@@ -66,7 +72,7 @@ export class GameStore {
   public flipCard(index: number) {
     if (this.isValidIndex(index, this.cards)) {
       this.log(`Flipping Card-${index}.`);
-      cardsRef
+      this.cardsRef
         .child(index + "")
         .child("state")
         .child("isFaceUp")
@@ -97,7 +103,7 @@ export class GameStore {
           //this.cards[index].state.owner
         );
 
-        cardsRef
+        this.cardsRef
           .child("" + index)
           .child("state")
           .set(updatedCardState);
@@ -127,7 +133,7 @@ export class GameStore {
     if (this.isValidIndex(index, this.seats)) {
       if (this.seats[index].isFree()) {
         this.log(`${user} is sitting down on seat ${index}.`);
-        seatsRef
+        this.seatsRef
           .child("" + index)
           .child("owner")
           .set(user);
@@ -138,31 +144,16 @@ export class GameStore {
   }
 
   public setRoomConfig(config: RoomConfig) {
-    roomConfigRef.set(config);
+    this.roomConfigRef.set(config);
   }
 
   public freeSeat(index: number) {
     if (this.isValidIndex(index, this.seats)) {
-      seatsRef
+      this.seatsRef
         .child("" + index)
         .child("owner")
         .set(EMPTY_SEAT);
     }
-  }
-
-  public initData() {
-    const emptySeats: Array<SeatData> = [];
-
-    for (let index = 0; index < this.roomConfig.numberOfPlayers; index++) {
-      emptySeats.push(new SeatData());
-    }
-    const initialData: GameStoreData = {
-      cards: new StandardDeck(this.roomConfig.deckConfig).cards,
-      seats: emptySeats,
-      roomConfig: this.roomConfig,
-    };
-    console.log(initialData);
-    roomRef.set(initialData);
   }
 
   private isValidIndex(index: number, array: Array<any>) {
@@ -203,9 +194,7 @@ export class GameStore {
         snapshot.val().seats.forEach((seat: any) => {
           this.seats.push(SeatData.fromPojo(seat));
         });
-      } else {
-        isError = true;
-      }
+      } // seats can be emptys therefore, no error here.
 
       //init roomConfig
       if (snapshot.val().roomConfig) {
@@ -241,9 +230,11 @@ export class GameStore {
 
   private setSeatsOfSnapshot(seatsSnapshot: firebase.database.DataSnapshot) {
     this.seats = [];
-    seatsSnapshot.val().forEach((seat: any) => {
-      this.seats.push(SeatData.fromPojo(seat));
-    });
+    if (seatsSnapshot.val()) {
+      seatsSnapshot.val().forEach((seat: any) => {
+        this.seats.push(SeatData.fromPojo(seat));
+      });
+    }
   }
 
   private setRoomConfigOfSnapshot(
