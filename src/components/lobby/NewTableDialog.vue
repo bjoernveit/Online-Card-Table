@@ -1,16 +1,16 @@
 <template>
   <div class="new-table-dialog">
     <form class="row">
-      <div class="col-4">
+      <div class="col-8">
         <input
           id="roomNameInput"
           type="text"
           v-model="name"
-          placeholder="Room Name"
+          placeholder="New Room Name"
           class="form-control border-dark"
         />
       </div>
-      <div class="col-4">
+      <!-- <div class="col-4">
         <input
           id="roomPwInput"
           type="text"
@@ -18,7 +18,7 @@
           placeholder="Password (optional)"
           class="form-control border-dark"
         />
-      </div>
+      </div>-->
       <div class="col-1">
         <input
           class="form-control"
@@ -29,7 +29,8 @@
           max="10"
         />
       </div>
-      <div class="col-2 offset-1">
+      <div class="col text-center">You</div>
+      <div class="col">
         <button
           class="btn btn-success float-right"
           @click.prevent="createAndJoinRoom"

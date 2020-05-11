@@ -13,6 +13,14 @@
     </div>
     <div>
       <Table :gameStore="gameStore">
+        <div class="only-small-screen text-center" v-if="!isDismissed">
+          <fa-icon class="preview-icon" icon="info-circle" />You seem to have relativly small screen/window, please use your browsers build in zoom function to make everything fit your screen.
+          You can use the shortcut Strg/Ctrl and - (minus) to zoom out, on most systems.
+          <span
+            class="dismiss"
+            @click="dismiss"
+          >Dismiss</span>
+        </div>
         <Card
           v-for="(card, index) in gameStore.cards"
           :key="index"
@@ -85,6 +93,7 @@ export default class CardRoom extends Vue {
   @Prop() readonly globalStore!: GlobalStore;
   @Prop(String) readonly ownerUId!: string;
   private isShowConfig = false;
+  private isDismissed = false;
 
   mounted() {
     //this.resetCards();
@@ -95,6 +104,10 @@ export default class CardRoom extends Vue {
     for (let index = 0; index < this.roomConfig.numberOfPlayers; index++) {
       this.gameStore.freeSeat(index);
     }
+  }
+
+  dismiss() {
+    this.isDismissed = true;
   }
 
   showConfig() {
@@ -232,6 +245,25 @@ $drag-zoom-factor = 1;
   justify-content: space-around;
   align-items: center;
   align-content: space-around;
+}
+
+.only-small-screen {
+  display: none;
+  font-size: 1.1rem;
+  padding: 10px;
+  font-weight: bold;
+  text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.25);
+
+  & .dismiss {
+    color: blue;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 1650px) {
+  .only-small-screen {
+    display: block;
+  }
 }
 
 .card {
