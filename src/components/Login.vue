@@ -93,7 +93,7 @@ export default class Login extends Vue {
   }
 
   get isPasswordValid(): boolean {
-    return this.password.length > 6 && this.password.length < 20;
+    return this.password.length >= 6 && this.password.length < 20;
   }
 
   get arePasswordsEqual() {
